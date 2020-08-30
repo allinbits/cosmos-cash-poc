@@ -3,3 +3,4 @@ frontend/dist
 frontend/.cache
 
 *.swp
+cscope.*
