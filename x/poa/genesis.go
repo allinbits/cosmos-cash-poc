@@ -5,6 +5,7 @@ import (
 	"github.com/allinbits/cosmos-cash-poa/x/poa/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 // InitGenesis initialize default parameters
@@ -23,4 +24,9 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) []ab
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) (data types.GenesisState) {
 	// TODO: Define logic for exporting state
 	return types.DefaultGenesisState()
+}
+
+// WriteValidators returns a slice of bonded genesis validators.
+func WriteValidators(ctx sdk.Context, keeper keeper.Keeper) (vals []tmtypes.GenesisValidator) {
+	return vals
 }

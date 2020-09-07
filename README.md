@@ -58,7 +58,7 @@ poacli keys add validator
 3. Add the validator that was created in the step 2 as the first validator and assign them 1000000000 `cash` coins
 
 ```sh
-poad add-genesis-account $(poacli keys show validator -a) 1000000000cash
+poad add-genesis-account $(poacli keys show validator -a) 1000000000cash,1000000000stake
 ```
 
 <br />

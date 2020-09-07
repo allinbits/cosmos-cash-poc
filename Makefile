@@ -22,7 +22,6 @@ go.sum: go.mod
 		@echo "--> Ensure dependencies have not been modified"
 		GO111MODULE=on go mod verify
 
-
 test:
 	@go test -mod=readonly $(PACKAGES)
 
@@ -45,19 +44,19 @@ init-validator:
 	go run cmd/poad/main.go cmd/poad/genaccounts.go collect-gentxs
 
 create-validator:
-	go run cmd/poacli/main.go tx poa create-validator val1 $(shell go run cmd/poad/main.go cmd/poad/genaccounts.go tendermint show-validator) --trust-node --from validator --chain-id cash
+	go run cmd/poacli/main.go tx poa create-validator validator $(shell go run cmd/poad/main.go cmd/poad/genaccounts.go tendermint show-validator) --trust-node --from validator --chain-id cash
 
 query-validator:
-	go run cmd/poacli/main.go query poa validator-poa val1 --trust-node --chain-id cash
+	go run cmd/poacli/main.go query poa validator-poa validator --trust-node --chain-id cash
 
 query-all-validators:
 	go run cmd/poacli/main.go query poa validators
 
 vote-validator:
-	go run cmd/poacli/main.go tx poa vote-validator val1 --trust-node --from validator --chain-id cash
+	go run cmd/poacli/main.go tx poa vote-validator validator --trust-node --from validator --chain-id cash
 
 query-vote:
-	go run cmd/poacli/main.go query poa vote-poa val1 $(shell go run cmd/poacli/main.go keys show validator --bech val -a) --trust-node --chain-id cash
+	go run cmd/poacli/main.go query poa vote-poa validator $(shell go run cmd/poacli/main.go keys show validator --bech val -a) --trust-node --chain-id cash
 
 query-all-votes:
 	go run cmd/poacli/main.go query poa votes
@@ -69,7 +68,7 @@ query-all-votes:
 	init-dev 		\
 	init-chain		\
 	create-validator	\
-	qquery-validator	\
+	query-validator		\
 	query-all-validators	\
 	vote-validator		\
 	query-vote		\

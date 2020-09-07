@@ -10,7 +10,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 	validators := k.GetAllValidators(ctx)
 
 	for _, validator := range validators {
-		if validator.Accepted == true {
+		if validator.Accepted == true || len(validators) == 1 {
 			updates = append(updates, validator.ABCIValidatorUpdate())
 		}
 	}
@@ -21,12 +21,11 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 // CalculateValidatorVote happens at the start of every block to ensure no malacious actors
 func (k Keeper) CalculateValidatorVotes(ctx sdk.Context) {
 	// TODO: On every block calculate and update validator set
-
 	validators := k.GetAllValidators(ctx)
 
-	// TODO: Smart query method
+	// Smart query method
 	for _, validator := range validators {
-		votes := k.GetAllVotesForValidator(ctx, (validator.Name))
+		votes := k.GetAllVotesForValidator(ctx, validator.Name)
 		if len(votes) == len(validators) {
 			validator.Accepted = true
 			k.SetValidator(ctx, validator.Name, validator)
@@ -42,6 +41,8 @@ func (k Keeper) CalculateValidatorVotes(ctx sdk.Context) {
 	//		if vote.Name == validator.Name {
 	//			count++
 	//			if count == len(validators) {
+	//				validator.Accepted = true
+	//				k.SetValidator(ctx, validator.Name, validator)
 	//			}
 	//		}
 	//	}

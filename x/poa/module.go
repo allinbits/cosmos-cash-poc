@@ -16,6 +16,8 @@ import (
 	"github.com/allinbits/cosmos-cash-poa/x/poa/keeper"
 	"github.com/allinbits/cosmos-cash-poa/x/poa/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	cfg "github.com/tendermint/tendermint/config"
@@ -91,25 +93,25 @@ func (AppModuleBasic) CreateValidatorMsgHelpers(ipDefault string) (
 //// PrepareFlagsForTxCreateValidator - used for gen-tx
 func (AppModuleBasic) PrepareFlagsForTxCreateValidator(config *cfg.Config, nodeID,
 	chainID string, valPubKey crypto.PubKey) {
-	viper.Set("pubkey", sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, valPubKey))
-	viper.Set("chain-id", chainID)
-	viper.Set("node-id", nodeID)
+	viper.Set(flags.FlagFrom, viper.GetString(flags.FlagName))
+	viper.Set(flags.FlagChainID, chainID)
 
+	viper.Set("pubkey", sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, valPubKey))
+	viper.Set("node-id", nodeID)
 }
 
 //// BuildCreateValidatorMsg - used for gen-tx
 func (AppModuleBasic) BuildCreateValidatorMsg(cliCtx context.CLIContext,
 	txBldr authtypes.TxBuilder) (authtypes.TxBuilder, sdk.Msg, error) {
 	pkStr := viper.GetString("pubkey")
-
-	valAddr := cliCtx.GetFromAddress()
-	consAddr := sdk.ValAddress(cliCtx.GetFromAddress())
-	pk, _ := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pkStr)
-
-	msg := types.NewMsgCreateValidatorPOA("args[0]", consAddr, pk, valAddr)
 	ip := viper.GetString("ip")
 	nodeID := viper.GetString("node-id")
 
+	accAddr := cliCtx.GetFromAddress()
+	valAddr := sdk.ValAddress(accAddr)
+	pk, _ := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pkStr)
+
+	msg := types.NewMsgCreateValidatorPOA(viper.GetString(flags.FlagName), valAddr, pk, accAddr)
 	txBldr = txBldr.WithMemo(fmt.Sprintf("%s@%s:26656", nodeID, ip))
 
 	return txBldr, msg, nil
