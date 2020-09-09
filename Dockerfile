@@ -23,10 +23,11 @@ RUN make install
 FROM alpine:edge
 
 ## Install ca-certificates
-#RUN apk add --update ca-certificates
+RUN apk add --update ca-certificates
 WORKDIR /root
 
 COPY --from=build-env /go/bin/poad /usr/bin/poad
+COPY --from=build-env /go/bin/poacli /usr/bin/poacli
 
 EXPOSE 26656 26657 1317 9090
 

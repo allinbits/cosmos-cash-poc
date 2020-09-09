@@ -1,0 +1,83 @@
+version: "3"
+
+services:
+  poadnode0:
+    container_name: poadnode0
+    image: "388991194029.dkr.ecr.us-east-1.amazonaws.com/allinbits-dev/cosmos-cash-poa"
+    ports:
+      - "26656:26656"
+      - "26657:26657"
+      - "1317:1317"
+      - "9090:9090"
+    environment:
+      - ID=0
+      - LOG=${LOG:-poad.log}
+    volumes:
+      - ./build/.poad:/root/.poad
+      - ./build/validator:/root/validator
+    command: ["poad", "start"]
+    networks:
+      localnet:
+        ipv4_address: 192.16.10.2
+
+  poadnode1:
+    container_name: poadnode1
+    image: "388991194029.dkr.ecr.us-east-1.amazonaws.com/allinbits-dev/cosmos-cash-poa"
+    ports:
+      - "26666-26667:26656-26657"
+      - "1318:1317"
+      - "9091:9090"
+    environment:       
+      - NODE0ADDRESS=${NODE0ADDRESS}
+      - ID=1
+      - LOG=${LOG:-poad.log}
+    command: ["sh", "-c", "poad init cash1 && cp genesis.json .poad/config && sed -i 's/peers = \"\"/peers = \"$NODE0ADDRESS\"/g' .poad/config/config.toml && poad start" ]
+    volumes:
+      - ./build/.poad/config/genesis.json:/root/genesis.json
+    networks:
+      localnet:
+        ipv4_address: 192.16.10.3
+
+  poadnode2:
+    container_name: poadnode2
+    image: "388991194029.dkr.ecr.us-east-1.amazonaws.com/allinbits-dev/cosmos-cash-poa"
+    ports:
+      - "26676-26677:26656-26657"
+      - "1319:1317"
+      - "9092:9090"
+    environment:       
+      - NODE0ADDRESS=${NODE0ADDRESS}
+      - ID=1
+      - LOG=${LOG:-poad.log}
+    command: ["sh", "-c", "poad init cash2 && cp genesis.json .poad/config && sed -i 's/peers = \"\"/peers = \"$NODE0ADDRESS\"/g' .poad/config/config.toml && poad start" ]
+    volumes:
+      - ./build/.poad/config/genesis.json:/root/genesis.json
+    networks:
+      localnet:
+        ipv4_address: 192.16.10.4
+
+  poadnode3:
+    container_name: poadnode3
+    image: "388991194029.dkr.ecr.us-east-1.amazonaws.com/allinbits-dev/cosmos-cash-poa"
+    ports:
+      - "26686-26687:26656-26657"
+      - "1320:1317"
+      - "9093:9090"
+    environment:       
+      - NODE0ADDRESS=${NODE0ADDRESS}
+      - ID=1
+      - LOG=${LOG:-poad.log}
+    command: ["sh", "-c", "poad init cash3 && cp genesis.json .poad/config && sed -i 's/peers = \"\"/peers = \"$NODE0ADDRESS\"/g' .poad/config/config.toml && poad start" ]
+    volumes:
+      - ./build/.poad/config/genesis.json:/root/genesis.json
+    networks:
+      localnet:
+        ipv4_address: 192.16.10.5
+
+networks:
+  localnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.16.10.0/16
+
