@@ -43,9 +43,15 @@ func handleMsgCreateValidatorPOA(ctx sdk.Context, msg msg.MsgCreateValidatorPOA,
 
 	k.SetValidator(ctx, msg.Name, validator)
 
-	// TODO: Add events
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			stakingtypes.EventTypeCreateValidator,
+			sdk.NewAttribute(stakingtypes.AttributeKeyValidator, msg.Address.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+		),
+	})
 
-	return &sdk.Result{}, nil
+	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
 }
 
 func handleMsgVoteValidator(ctx sdk.Context, msg msg.MsgVoteValidator, k keeper.Keeper) (*sdk.Result, error) {
@@ -62,7 +68,13 @@ func handleMsgVoteValidator(ctx sdk.Context, msg msg.MsgVoteValidator, k keeper.
 
 	k.SetVote(ctx, vote)
 
-	// TODO: Add events
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeVote,
+			sdk.NewAttribute(stakingtypes.AttributeKeyValidator, msg.Voter.String()),
+			sdk.NewAttribute(types.AttributeKeyCandidate, msg.Name),
+		),
+	})
 
-	return &sdk.Result{}, nil
+	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
 }

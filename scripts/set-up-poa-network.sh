@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# TODO: finish off setting up network 
-# TODO: this is temporary should use 
+# TODO: finish off setting up network
 # TODO: use docker exec to run commands
 # TODO: use a integration test
 
