@@ -1,12 +1,15 @@
-package types
+package poa
 
 import (
+	"github.com/allinbits/cosmos-cash-poa/x/poa/msg"
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 // RegisterCodec registers concrete types on codec
 func RegisterCodec(cdc *codec.Codec) {
-  // this line is used by starport scaffolding
+	cdc.RegisterConcrete(msg.MsgCreateValidatorPOA{}, "poa/MsgCreateValidatorPOA", nil)
+	cdc.RegisterConcrete(msg.MsgVoteValidator{}, "poa/MsgVoteValidator", nil)
+
 }
 
 // ModuleCdc defines the module codec

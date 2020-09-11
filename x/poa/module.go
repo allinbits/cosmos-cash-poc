@@ -2,21 +2,28 @@ package poa
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
+	"github.com/spf13/viper"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
+	"github.com/allinbits/cosmos-cash-poa/x/poa/client/cli"
+	"github.com/allinbits/cosmos-cash-poa/x/poa/client/rest"
+	"github.com/allinbits/cosmos-cash-poa/x/poa/keeper"
+	"github.com/allinbits/cosmos-cash-poa/x/poa/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	cfg "github.com/tendermint/tendermint/config"
+	"github.com/tendermint/tendermint/crypto"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/allinbits/poa/x/poa/client/cli"
-	"github.com/allinbits/poa/x/poa/client/rest"
-	"github.com/allinbits/poa/x/poa/keeper"
-	"github.com/allinbits/poa/x/poa/types"
 )
 
 // Type check to ensure the interface is properly implemented
@@ -35,19 +42,19 @@ func (AppModuleBasic) Name() string {
 
 // RegisterCodec registers the poa module's types for the given codec.
 func (AppModuleBasic) RegisterCodec(cdc *codec.Codec) {
-	types.RegisterCodec(cdc)
+	RegisterCodec(cdc)
 }
 
 // DefaultGenesis returns default genesis state as raw bytes for the poa
 // module.
 func (AppModuleBasic) DefaultGenesis() json.RawMessage {
-	return types.ModuleCdc.MustMarshalJSON(types.DefaultGenesisState())
+	return ModuleCdc.MustMarshalJSON(types.DefaultGenesisState())
 }
 
 // ValidateGenesis performs genesis state validation for the poa module.
 func (AppModuleBasic) ValidateGenesis(bz json.RawMessage) error {
 	var data types.GenesisState
-	err := types.ModuleCdc.UnmarshalJSON(bz, &data)
+	err := ModuleCdc.UnmarshalJSON(bz, &data)
 	if err != nil {
 		return err
 	}
@@ -67,6 +74,45 @@ func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 // GetQueryCmd returns no root query command for the poa module.
 func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	return cli.GetQueryCmd(types.StoreKey, cdc)
+}
+
+// extra helpers - gen-tx
+
+// TODO: These need to be updated to pass in the correct data
+
+//// CreateValidatorMsgHelpers - used for gen-tx
+func (AppModuleBasic) CreateValidatorMsgHelpers(ipDefault string) (
+	fs *flag.FlagSet, nodeIDFlag, pubkeyFlag, amountFlag, defaultsDesc string) {
+	viper.Set("ip", ipDefault)
+
+	return nil, "node-id", "pubkey", "nil", "nil"
+}
+
+//// PrepareFlagsForTxCreateValidator - used for gen-tx
+func (AppModuleBasic) PrepareFlagsForTxCreateValidator(config *cfg.Config, nodeID,
+	chainID string, valPubKey crypto.PubKey) {
+	viper.Set("pubkey", sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, valPubKey))
+	viper.Set("chain-id", chainID)
+	viper.Set("node-id", nodeID)
+
+}
+
+//// BuildCreateValidatorMsg - used for gen-tx
+func (AppModuleBasic) BuildCreateValidatorMsg(cliCtx context.CLIContext,
+	txBldr authtypes.TxBuilder) (authtypes.TxBuilder, sdk.Msg, error) {
+	pkStr := viper.GetString("pubkey")
+
+	valAddr := cliCtx.GetFromAddress()
+	consAddr := sdk.ValAddress(cliCtx.GetFromAddress())
+	pk, _ := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pkStr)
+
+	msg := types.NewMsgCreateValidatorPOA("args[0]", consAddr, pk, valAddr)
+	ip := viper.GetString("ip")
+	nodeID := viper.GetString("node-id")
+
+	txBldr = txBldr.WithMemo(fmt.Sprintf("%s@%s:26656", nodeID, ip))
+
+	return txBldr, msg, nil
 }
 
 //____________________________________________________________________________
@@ -116,14 +162,14 @@ func (AppModule) QuerierRoute() string {
 
 // NewQuerierHandler returns the poa module sdk.Querier.
 func (am AppModule) NewQuerierHandler() sdk.Querier {
-	return keeper.NewQuerier(am.keeper)
+	return NewQuerier(am.keeper)
 }
 
 // InitGenesis performs genesis initialization for the poa module. It returns
 // no validator updates.
 func (am AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState types.GenesisState
-	types.ModuleCdc.MustUnmarshalJSON(data, &genesisState)
+	ModuleCdc.MustUnmarshalJSON(data, &genesisState)
 	InitGenesis(ctx, am.keeper, genesisState)
 	return []abci.ValidatorUpdate{}
 }
@@ -132,7 +178,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.Va
 // module.
 func (am AppModule) ExportGenesis(ctx sdk.Context) json.RawMessage {
 	gs := ExportGenesis(ctx, am.keeper)
-	return types.ModuleCdc.MustMarshalJSON(gs)
+	return ModuleCdc.MustMarshalJSON(gs)
 }
 
 // BeginBlock returns the begin blocker for the poa module.
@@ -142,6 +188,6 @@ func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
 
 // EndBlock returns the end blocker for the poa module. It returns no validator
 // updates.
-func (AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
-	return []abci.ValidatorUpdate{}
+func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+	return EndBlocker(ctx, am.keeper)
 }

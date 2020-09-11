@@ -1,5 +1,10 @@
 package types
 
+var (
+	ValidatorsKey = []byte{0x51} // prefix for each key to a validator
+	VotesKey      = []byte{0x52} // prefix for each key to a vote
+)
+
 const (
 	// ModuleName is the name of the module
 	ModuleName = "poa"

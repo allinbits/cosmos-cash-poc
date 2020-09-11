@@ -1,16 +1,20 @@
 package poa
 
 import (
+	"github.com/allinbits/cosmos-cash-poa/x/poa/keeper"
+	"github.com/allinbits/cosmos-cash-poa/x/poa/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/allinbits/poa/x/poa/keeper"
-	"github.com/allinbits/poa/x/poa/types"
-	// abci "github.com/tendermint/tendermint/abci/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // InitGenesis initialize default parameters
 // and the keeper's address to pubkey map
-func InitGenesis(ctx sdk.Context, k keeper.Keeper /* TODO: Define what keepers the module needs */, data types.GenesisState) {
-	// TODO: Define logic for when you would like to initalize a new genesis
+func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) []abci.ValidatorUpdate {
+	for _, validator := range data.Validators {
+		k.SetValidator(ctx, validator.Name, validator)
+	}
+
+	return k.ApplyAndReturnValidatorSetUpdates(ctx)
 }
 
 // ExportGenesis writes the current store values
@@ -18,5 +22,5 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper /* TODO: Define what keepers t
 // with InitGenesis
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) (data types.GenesisState) {
 	// TODO: Define logic for exporting state
-	return types.NewGenesisState()
+	return types.DefaultGenesisState()
 }

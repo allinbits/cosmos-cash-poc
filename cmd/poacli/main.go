@@ -23,8 +23,8 @@ import (
 	"github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/allinbits/poa/app"
-  // this line is used by starport scaffolding
+	"github.com/allinbits/cosmos-cash-poa/app"
+	// this line is used by starport scaffolding
 )
 
 func main() {
@@ -141,7 +141,7 @@ func registerRoutes(rs *lcd.RestServer) {
 	client.RegisterRoutes(rs.CliCtx, rs.Mux)
 	authrest.RegisterTxRoutes(rs.CliCtx, rs.Mux)
 	app.ModuleBasics.RegisterRESTRoutes(rs.CliCtx, rs.Mux)
-  // this line is used by starport scaffolding # 2
+	// this line is used by starport scaffolding # 2
 }
 
 func initConfig(cmd *cobra.Command) error {

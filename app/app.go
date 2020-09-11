@@ -10,6 +10,9 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/allinbits/cosmos-cash-poa/x/poa"
+	poaKeeper "github.com/allinbits/cosmos-cash-poa/x/poa/keeper"
+	poatypes "github.com/allinbits/cosmos-cash-poa/x/poa/types"
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -22,18 +25,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
-	"github.com/allinbits/poa/x/poa"
-	poakeeper "github.com/allinbits/poa/x/poa/keeper"
-	poatypes "github.com/allinbits/poa/x/poa/types"
-  // this line is used by starport scaffolding
+	// this line is used by starport scaffolding
 )
 
-const appName = "app"
+const appName = "cosmos-cash"
 
 var (
-	DefaultCLIHome = os.ExpandEnv("$HOME/.poacli")
+	DefaultCLIHome  = os.ExpandEnv("$HOME/.poacli")
 	DefaultNodeHome = os.ExpandEnv("$HOME/.poad")
-	ModuleBasics = module.NewBasicManager(
+	ModuleBasics    = module.NewBasicManager(
 		genutil.AppModuleBasic{},
 		auth.AppModuleBasic{},
 		bank.AppModuleBasic{},
@@ -41,7 +41,6 @@ var (
 		params.AppModuleBasic{},
 		supply.AppModuleBasic{},
 		poa.AppModuleBasic{},
-    // this line is used by starport scaffolding # 2
 	)
 
 	maccPerms = map[string][]string{
@@ -72,14 +71,13 @@ type NewApp struct {
 
 	subspaces map[string]params.Subspace
 
-	accountKeeper  auth.AccountKeeper
-	bankKeeper     bank.Keeper
-	stakingKeeper  staking.Keeper
-	supplyKeeper   supply.Keeper
-	paramsKeeper   params.Keeper
-	poaKeeper poakeeper.Keeper
-  // this line is used by starport scaffolding # 3
-	mm *module.Manager
+	accountKeeper auth.AccountKeeper
+	bankKeeper    bank.Keeper
+	stakingKeeper staking.Keeper
+	supplyKeeper  supply.Keeper
+	paramsKeeper  params.Keeper
+	poaKeeper     poaKeeper.Keeper
+	mm            *module.Manager
 
 	sm *module.SimulationManager
 }
@@ -97,14 +95,13 @@ func NewInitApp(
 	bApp.SetAppVersion(version.Version)
 
 	keys := sdk.NewKVStoreKeys(
-    bam.MainStoreKey,
-    auth.StoreKey,
-    staking.StoreKey,
+		bam.MainStoreKey,
+		auth.StoreKey,
+		staking.StoreKey,
 		supply.StoreKey,
-    params.StoreKey,
-    poatypes.StoreKey,
-    // this line is used by starport scaffolding # 5
-  )
+		params.StoreKey,
+		poatypes.StoreKey,
+	)
 
 	tKeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
 
@@ -154,13 +151,11 @@ func NewInitApp(
 		staking.NewMultiStakingHooks(),
 	)
 
-	app.poaKeeper = poakeeper.NewKeeper(
+	app.poaKeeper = poaKeeper.NewKeeper(
 		app.bankKeeper,
 		app.cdc,
 		keys[poatypes.StoreKey],
 	)
-
-  // this line is used by starport scaffolding # 4
 
 	app.mm = module.NewManager(
 		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
@@ -169,10 +164,9 @@ func NewInitApp(
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		poa.NewAppModule(app.poaKeeper, app.bankKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.accountKeeper, app.supplyKeeper),
-    // this line is used by starport scaffolding # 6
 	)
 
-	app.mm.SetOrderEndBlockers(staking.ModuleName)
+	app.mm.SetOrderEndBlockers(poatypes.ModuleName)
 
 	app.mm.SetOrderInitGenesis(
 		staking.ModuleName,
@@ -181,7 +175,6 @@ func NewInitApp(
 		poatypes.ModuleName,
 		supply.ModuleName,
 		genutil.ModuleName,
-    // this line is used by starport scaffolding # 7
 	)
 
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
