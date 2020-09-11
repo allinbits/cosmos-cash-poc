@@ -50,11 +50,15 @@ func TestHandleCreateValidatorPOA(t *testing.T) {
 
 	msg := msg.NewMsgCreateValidatorPOA(name, valAddr, valPubKey, accAddr)
 
-	handleMsgCreateValidatorPOA(ctx, msg, keeper)
+	res, err := handleMsgCreateValidatorPOA(ctx, msg, keeper)
 
 	// Validate msg was handled correctly but checking the size of the store
 	allVals := keeper.GetAllValidators(ctx)
 	require.Equal(t, 1, len(allVals))
+
+	// No errors and res is populates
+	require.NoError(t, err)
+	require.NotNil(t, res)
 }
 
 func TestHandleVoteValidatorPOA(t *testing.T) {
@@ -76,9 +80,13 @@ func TestHandleVoteValidatorPOA(t *testing.T) {
 
 	msg := msg.NewMsgVoteValidator("name", valAddr, accAddr)
 
-	handleMsgVoteValidator(ctx, msg, keeper)
+	res, err := handleMsgVoteValidator(ctx, msg, keeper)
 
 	// Validate msg was handled correctly but checking the size of the store
 	allVotes := keeper.GetAllVotes(ctx)
 	require.Equal(t, 1, len(allVotes))
+
+	// No errors and res is populated
+	require.NoError(t, err)
+	require.NotNil(t, res)
 }

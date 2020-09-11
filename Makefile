@@ -76,22 +76,22 @@ export-key:
 # TODO: Remove at a later date when POC is at closing stage
 
 create-validator:
-	go run cmd/poacli/main.go tx poa create-validator val1 $(shell go run cmd/poad/main.go cmd/poad/genaccounts.go tendermint show-validator) --trust-node --from validator --chain-id cash
+	go run cmd/poacli/main.go tx poa create-validator validator $(shell go run cmd/poad/main.go cmd/poad/genaccounts.go tendermint show-validator) --trust-node --from validator --chain-id cash --home ./build/.poad
 
 query-validator:
-	go run cmd/poacli/main.go query poa validator-poa val1 --trust-node --chain-id cash
+	go run cmd/poacli/main.go query poa validator-poa validator --trust-node --chain-id cash --home ./build/.poad
 
 query-all-validators:
-	go run cmd/poacli/main.go query poa validators
+	go run cmd/poacli/main.go query poa validators --home ./build/.poad
 
 vote-validator:
-	go run cmd/poacli/main.go tx poa vote-validator val1 --trust-node --from validator --chain-id cash
+	go run cmd/poacli/main.go tx poa vote-validator validator --trust-node --from validator --chain-id cash --home ./build/.poad
 
 query-vote:
-	go run cmd/poacli/main.go query poa vote-poa val1 $(shell go run cmd/poacli/main.go keys show validator --bech val -a) --trust-node --chain-id cash
+	go run cmd/poacli/main.go query poa vote-poa validator $(shell go run cmd/poacli/main.go keys show validator --bech val -a) --trust-node --chain-id cash --home ./build/.poad
 
 query-all-votes:
-	go run cmd/poacli/main.go query poa votes
+	go run cmd/poacli/main.go query poa votes --home ./build/.poad
 
 send-coin:
 	poacli tx send cosmos1h6c36qvkpdycas468lcfmp6xjl39cwvethemuj cosmos1djh6qxf893a6lk2evecce5cexhvan5tcpnezt0 10000stake --from validator --trust-node --chain-id cash
