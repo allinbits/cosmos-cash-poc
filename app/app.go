@@ -118,6 +118,7 @@ func NewInitApp(
 	app.subspaces[auth.ModuleName] = app.paramsKeeper.Subspace(auth.DefaultParamspace)
 	app.subspaces[bank.ModuleName] = app.paramsKeeper.Subspace(bank.DefaultParamspace)
 	app.subspaces[staking.ModuleName] = app.paramsKeeper.Subspace(staking.DefaultParamspace)
+	app.subspaces[poatypes.ModuleName] = app.paramsKeeper.Subspace(poaKeeper.DefaultParamspace)
 
 	app.accountKeeper = auth.NewAccountKeeper(
 		app.cdc,
@@ -155,6 +156,7 @@ func NewInitApp(
 		app.bankKeeper,
 		app.cdc,
 		keys[poatypes.StoreKey],
+		app.subspaces[poatypes.ModuleName],
 	)
 
 	app.mm = module.NewManager(

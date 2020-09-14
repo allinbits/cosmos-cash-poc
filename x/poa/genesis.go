@@ -10,6 +10,9 @@ import (
 // InitGenesis initialize default parameters
 // and the keeper's address to pubkey map
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) []abci.ValidatorUpdate {
+	// set the params
+	k.SetParams(ctx, data.Params)
+
 	for _, validator := range data.Validators {
 		k.SetValidator(ctx, validator.Name, validator)
 	}

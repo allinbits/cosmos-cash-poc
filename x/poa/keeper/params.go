@@ -1,12 +1,12 @@
 package keeper
-/*
-// TODO: Define if your module needs Parameters, if not this can be deleted
 
 import (
-	"time"
-
+	"github.com/allinbits/cosmos-cash-poa/x/poa/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/allinbits/poa/x/poa/types"
+)
+
+const (
+	DefaultParamspace = types.ModuleName
 )
 
 // GetParams returns the total set of poa parameters.
@@ -19,4 +19,3 @@ func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
 func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramspace.SetParamSet(ctx, &params)
 }
-*/

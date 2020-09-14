@@ -75,6 +75,7 @@ func MakeTestCtxAndKeeper(t *testing.T) (sdk.Context, Keeper) {
 		bk,
 		cdc,
 		keyPoa,
+		pk.Subspace(DefaultParamspace),
 	)
 
 	return ctx, keeper
