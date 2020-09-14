@@ -11,6 +11,8 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
+// TODO: handle errors correctly
+
 // NewHandler ...
 func NewHandler(k keeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
@@ -55,8 +57,20 @@ func handleMsgCreateValidatorPOA(ctx sdk.Context, msg msg.MsgCreateValidatorPOA,
 }
 
 func handleMsgVoteValidator(ctx sdk.Context, msg msg.MsgVoteValidator, k keeper.Keeper) (*sdk.Result, error) {
+	// check that the validator exists
 	_, found := k.GetValidator(ctx, msg.Name)
 	if !found {
+		return nil, nil
+	}
+
+	// check that the voting validator exists and is accepted
+	val, found := k.GetValidatorByAddress(ctx, msg.Voter)
+	if !found {
+		return nil, nil
+	}
+
+	// if the validator hasn't been accepted they cannot vote
+	if !val.Accepted {
 		return nil, nil
 	}
 

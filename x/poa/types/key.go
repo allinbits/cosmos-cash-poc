@@ -1,8 +1,9 @@
 package types
 
 var (
-	ValidatorsKey = []byte{0x51} // prefix for each key to a validator
-	VotesKey      = []byte{0x52} // prefix for each key to a vote
+	ValidatorsKey          = []byte{0x51} // prefix for each key to a validator
+	ValidatorsByAddressKey = []byte{0x52} // prefix for each key to a validator
+	VotesKey               = []byte{0x53} // prefix for each key to a vote
 )
 
 const (

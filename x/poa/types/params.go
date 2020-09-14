@@ -8,14 +8,17 @@ import (
 
 // Default parameter namespace
 const (
-	DefaultParamspace = ModuleName
-	// TODO: Define your default parameters
+	// Default percentage of votes to join the set
+	DefaultQuorum uint16 = 50
+
+	// Default maximum number of bonded validators
+	DefaultMaxValidators uint16 = 100
 )
 
-// Parameter store keys
+// nolint - Keys for parameter access
 var (
-	// TODO: Define your keys for the parameter store
-	// KeyParamName          = []byte("ParamName")
+	KeyQuorum        = []byte("Quorum")
+	KeyMaxValidators = []byte("MaxValidators")
 )
 
 // ParamKeyTable for poa module
@@ -25,33 +28,42 @@ func ParamKeyTable() params.KeyTable {
 
 // Params - used for initializing default parameter for poa at genesis
 type Params struct {
-	// TODO: Add your Paramaters to the Paramter struct
-	// KeyParamName string `json:"key_param_name"`
+	Quorum        uint16 `json:"quorum" yaml:"quorum"`                 // percentage of validators that need to vote
+	MaxValidators uint16 `json:"max_validators" yaml:"max_validators"` // maximum number of validators (max uint16 = 65535)
 }
 
 // NewParams creates a new Params object
-func NewParams(/* TODO: Pass in the paramters*/) Params {
+func NewParams(quorum uint16, maxValidators uint16) Params {
 	return Params{
-		// TODO: Create your Params Type
+		Quorum:        quorum,
+		MaxValidators: maxValidators,
 	}
 }
 
 // String implements the stringer interface for Params
 func (p Params) String() string {
 	return fmt.Sprintf(`
-	// TODO: Return all the params as a string
-	`, )
+	Quorum: %s, MaxValidators: %s
+	`, p.Quorum, p.MaxValidators)
 }
 
 // ParamSetPairs - Implements params.ParamSet
 func (p *Params) ParamSetPairs() params.ParamSetPairs {
 	return params.ParamSetPairs{
-		// TODO: Pair your key with the param
-		// params.NewParamSetPair(KeyParamName, &p.ParamName),
+		params.NewParamSetPair(KeyQuorum, &p.Quorum, validateQuorum),
+		params.NewParamSetPair(KeyMaxValidators, &p.MaxValidators, validateMaxValidators),
 	}
 }
 
 // DefaultParams defines the parameters for this module
 func DefaultParams() Params {
-	return NewParams( /* TODO: Pass in your default Params */ )
+	return NewParams(DefaultQuorum, DefaultMaxValidators)
+}
+
+func validateQuorum(i interface{}) error {
+	return nil
+}
+
+func validateMaxValidators(i interface{}) error {
+	return nil
 }

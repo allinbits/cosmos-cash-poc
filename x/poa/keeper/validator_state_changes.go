@@ -7,12 +7,10 @@ import (
 
 // ApplyAndReturnValidatorSetUpdates at the end of every block we update and return the validator set
 func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []abci.ValidatorUpdate) {
-	validators := k.GetAllValidators(ctx)
+	validators := k.GetAllAcceptedValidators(ctx)
 
 	for _, validator := range validators {
-		if validator.Accepted == true {
-			updates = append(updates, validator.ABCIValidatorUpdate())
-		}
+		updates = append(updates, validator.ABCIValidatorUpdate())
 	}
 
 	return updates
@@ -20,22 +18,23 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 
 // CalculateValidatorVote happens at the start of every block to ensure no malacious actors
 func (k Keeper) CalculateValidatorVotes(ctx sdk.Context) {
-	// TODO: On every block calculate and update validator set
-
+	acceptedValidators := k.GetAllAcceptedValidators(ctx)
 	validators := k.GetAllValidators(ctx)
+	qourum := k.GetParams(ctx).Quorum
 
-	// TODO: Smart query method
+	// Smart query method
 	for _, validator := range validators {
 		votes := k.GetAllVotesForValidator(ctx, (validator.Name))
-		if len(votes) == len(validators) {
+
+		// check the number of votes are greater that the qourum needed
+		if float32(len(votes)) >= (float32(len(acceptedValidators)))*(float32(qourum)/100) || len(validators) == 1 {
 			validator.Accepted = true
 			k.SetValidator(ctx, validator.Name, validator)
 		}
 	}
 
-	//votes := k.GetAllVotes(ctx)
-
 	// TODO: Brute force method
+	//votes := k.GetAllVotes(ctx)
 	//var count int = 0
 	//for _, validator := range validators {
 	//	for _, vote := range votes {
@@ -48,5 +47,4 @@ func (k Keeper) CalculateValidatorVotes(ctx sdk.Context) {
 	//}
 
 	// TODO: Jail validators if malicious
-
 }

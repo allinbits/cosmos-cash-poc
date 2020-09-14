@@ -8,6 +8,8 @@ import (
 	"github.com/allinbits/cosmos-cash-poa/x/poa/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
+
 	"github.com/cosmos/cosmos-sdk/x/bank"
 )
 
@@ -19,16 +21,16 @@ type Keeper struct {
 	CoinKeeper bank.Keeper
 	storeKey   sdk.StoreKey
 	cdc        *codec.Codec
-	// paramspace types.ParamSubspace
+	paramspace types.ParamSubspace
 }
 
 // NewKeeper creates a poa keeper
-func NewKeeper(coinKeeper bank.Keeper, cdc *codec.Codec, key sdk.StoreKey) Keeper {
+func NewKeeper(coinKeeper bank.Keeper, cdc *codec.Codec, key sdk.StoreKey, paramspace params.Subspace) Keeper {
 	keeper := Keeper{
 		CoinKeeper: coinKeeper,
 		storeKey:   key,
 		cdc:        cdc,
-		// paramspace: paramspace.WithKeyTable(types.ParamKeyTable()),
+		paramspace: paramspace.WithKeyTable(types.ParamKeyTable()),
 	}
 	return keeper
 }
