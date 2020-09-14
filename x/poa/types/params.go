@@ -43,7 +43,7 @@ func NewParams(quorum uint16, maxValidators uint16) Params {
 // String implements the stringer interface for Params
 func (p Params) String() string {
 	return fmt.Sprintf(`
-	Quorum: %s, MaxValidators: %s
+	Quorum: %v, MaxValidators: %v
 	`, p.Quorum, p.MaxValidators)
 }
 
