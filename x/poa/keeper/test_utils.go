@@ -20,7 +20,8 @@ import (
 )
 
 const (
-	SamplePubKey = "b7a3c12dc0c8c748ab07525b701122b88bd78f600c76342d27f25e5f92444cde"
+	SamplePubKey  = "b7a3c12dc0c8c748ab07525b701122b88bd78f600c76342d27f25e5f92444cde"
+	SamplePubKey2 = "b7a3c12dc0c8c748ab07525b701122b88bd78f600c76342d27f25e5f92444cdf"
 )
 
 func MakeTestPubKey(pk string) crypto.PubKey {
@@ -48,6 +49,8 @@ func MakeTestCtxAndKeeper(t *testing.T) (sdk.Context, Keeper) {
 	db := dbm.NewMemDB()
 	ms := store.NewCommitMultiStore(db)
 	ms.MountStoreWithDB(keyPoa, sdk.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(keyParams, sdk.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(tkeyParams, sdk.StoreTypeTransient, db)
 	_ = ms.LoadLatestVersion()
 
 	ctx := sdk.NewContext(ms, abci.Header{ChainID: "foochainid"}, true, nil)
@@ -77,6 +80,7 @@ func MakeTestCtxAndKeeper(t *testing.T) (sdk.Context, Keeper) {
 		keyPoa,
 		pk.Subspace(DefaultParamspace),
 	)
+	keeper.SetParams(ctx, types.DefaultParams())
 
 	return ctx, keeper
 }
