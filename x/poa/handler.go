@@ -11,8 +11,6 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
-// TODO: handle errors correctly
-
 // NewHandler ...
 func NewHandler(k keeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
@@ -31,11 +29,11 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 }
 
 func handleMsgCreateValidatorPOA(ctx sdk.Context, msg msg.MsgCreateValidatorPOA, k keeper.Keeper) (*sdk.Result, error) {
-	// check to see if the name has been registered before
 	if _, found := k.GetValidator(ctx, msg.Name); found {
-		return nil, nil
+		return nil, sdkerrors.Wrap(types.ErrBadValidatorAddr, fmt.Sprintf("unrecognized %s validator already exists: %T", types.ModuleName, msg))
 	}
 
+	// TODO: handle descripton properly
 	validator := types.NewValidator(
 		msg.Name,
 		msg.Address,
@@ -57,21 +55,19 @@ func handleMsgCreateValidatorPOA(ctx sdk.Context, msg msg.MsgCreateValidatorPOA,
 }
 
 func handleMsgVoteValidator(ctx sdk.Context, msg msg.MsgVoteValidator, k keeper.Keeper) (*sdk.Result, error) {
-	// check that the validator exists
 	_, found := k.GetValidator(ctx, msg.Name)
 	if !found {
-		return nil, nil
+		return nil, sdkerrors.Wrap(types.ErrNoValidatorFound, fmt.Sprintf("unrecognized %s validator does not exist: %T", types.ModuleName, msg))
 	}
 
-	// check that the voting validator exists and is accepted
 	val, found := k.GetValidatorByAddress(ctx, msg.Voter)
 	if !found {
-		return nil, nil
+		return nil, sdkerrors.Wrap(types.ErrEmptyValidatorAddr, fmt.Sprintf("unrecognized %s voting validator does not exist: %T", types.ModuleName, msg))
 	}
 
 	// if the validator hasn't been accepted they cannot vote
 	if !val.Accepted {
-		return nil, nil
+		return nil, sdkerrors.Wrap(types.ErrNoAcceptedValidatorFound, fmt.Sprintf("error %s validator is not accepted by consensus: %T", types.ModuleName, msg))
 	}
 
 	vote := types.NewVote(

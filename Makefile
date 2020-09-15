@@ -63,6 +63,10 @@ build-linux:
 ###                           Tests & Simulation                            ###
 ###############################################################################
 
+localnet-set-up-consensus:
+	./scripts/set-up-poa-network.sh
+
+
 localnet-start: init-dev export-key
 	NODE0ADDRESS=$(shell go run cmd/poad/main.go cmd/poad/genaccounts.go tendermint show-node-id --home ./build/.poad)@192.16.10.2:26656 docker-compose up
 
