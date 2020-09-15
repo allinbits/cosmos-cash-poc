@@ -5,8 +5,7 @@ services:
     container_name: poadnode0
     image: "388991194029.dkr.ecr.us-east-1.amazonaws.com/allinbits-dev/cosmos-cash-poa"
     ports:
-      - "26656:26656"
-      - "26657:26657"
+      - "26656-26657:26656-26657"
       - "1317:1317"
       - "9090:9090"
     environment:
