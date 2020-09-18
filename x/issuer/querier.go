@@ -1,7 +1,7 @@
-package keeper
+package issuer
 
 import (
-  // this line is used by starport scaffolding
+	"github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -9,10 +9,10 @@ import (
 )
 
 // NewQuerier creates a new querier for issuer clients.
-func NewQuerier(k Keeper) sdk.Querier {
+func NewQuerier(k keeper.Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) ([]byte, error) {
 		switch path[0] {
-    // this line is used by starport scaffolding # 2
+		// this line is used by starport scaffolding # 2
 		default:
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown issuer query endpoint")
 		}

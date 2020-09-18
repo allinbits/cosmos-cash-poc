@@ -40,6 +40,9 @@ lint:
 ###############################################################################
 
 init-dev: init-chain init-validator
+	
+start-dev:
+	go run cmd/poad/main.go cmd/poad/genaccounts.go start --chain-id=cash cash --home ./build/.poad
 
 init-chain:
 	go run cmd/poad/main.go cmd/poad/genaccounts.go init --chain-id=cash cash --home ./build/.poad
@@ -79,6 +82,8 @@ export-key:
 
 # TODO: Remove at a later date when POC is at closing stage
 
+### poa module commands
+
 create-validator:
 	go run cmd/poacli/main.go tx poa create-validator validator $(shell go run cmd/poad/main.go cmd/poad/genaccounts.go tendermint show-validator) --trust-node --from validator --chain-id cash --home ./build/.poad
 
@@ -99,6 +104,12 @@ query-all-votes:
 
 send-coin:
 	poacli tx send cosmos1h6c36qvkpdycas468lcfmp6xjl39cwvethemuj cosmos1djh6qxf893a6lk2evecce5cexhvan5tcpnezt0 10000stake --from validator --trust-node --chain-id cash
+
+### issuer module commands
+
+create-issuer:
+	echo "y" | go run cmd/poacli/main.go keys add euro-token-issuer
+	go run cmd/poacli/main.go tx issuer create-issuer euro-token-issuer $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) cashmoney 100000000000 --trust-node --from validator --chain-id cash
 
 .PHONY:				\
 	test			\
