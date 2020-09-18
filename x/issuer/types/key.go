@@ -1,5 +1,10 @@
 package types
 
+var (
+	IssuersKey = []byte{0x51} // prefix for each key to a Issuer
+	TokensKey  = []byte{0x53} // prefix for each key to a Token
+)
+
 const (
 	// ModuleName is the name of the module
 	ModuleName = "issuer"

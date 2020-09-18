@@ -10,6 +10,9 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/allinbits/cosmos-cash-poa/x/issuer"
+	issuerKeeper "github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
+	issuertypes "github.com/allinbits/cosmos-cash-poa/x/issuer/types"
 	"github.com/allinbits/cosmos-cash-poa/x/poa"
 	poaKeeper "github.com/allinbits/cosmos-cash-poa/x/poa/keeper"
 	poatypes "github.com/allinbits/cosmos-cash-poa/x/poa/types"
@@ -25,7 +28,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
-	// this line is used by starport scaffolding
 )
 
 const appName = "cosmos-cash"
@@ -41,6 +43,7 @@ var (
 		params.AppModuleBasic{},
 		supply.AppModuleBasic{},
 		poa.AppModuleBasic{},
+		issuer.AppModuleBasic{},
 	)
 
 	maccPerms = map[string][]string{
@@ -77,6 +80,7 @@ type NewApp struct {
 	supplyKeeper  supply.Keeper
 	paramsKeeper  params.Keeper
 	poaKeeper     poaKeeper.Keeper
+	issuerKeeper  issuerKeeper.Keeper
 	mm            *module.Manager
 
 	sm *module.SimulationManager
@@ -101,6 +105,7 @@ func NewInitApp(
 		supply.StoreKey,
 		params.StoreKey,
 		poatypes.StoreKey,
+		issuertypes.StoreKey,
 	)
 
 	tKeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
@@ -158,6 +163,11 @@ func NewInitApp(
 		keys[poatypes.StoreKey],
 		app.subspaces[poatypes.ModuleName],
 	)
+	app.issuerKeeper = issuerKeeper.NewKeeper(
+		app.bankKeeper,
+		app.cdc,
+		keys[issuertypes.StoreKey],
+	)
 
 	app.mm = module.NewManager(
 		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
@@ -165,6 +175,7 @@ func NewInitApp(
 		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		poa.NewAppModule(app.poaKeeper, app.bankKeeper),
+		issuer.NewAppModule(app.issuerKeeper, app.bankKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.accountKeeper, app.supplyKeeper),
 	)
 

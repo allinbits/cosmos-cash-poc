@@ -11,6 +11,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank"
 )
 
+// UnmarshalFn is a generic function to unmarshal bytes
+type UnmarshalFn func(value []byte) (interface{}, bool)
+
 // Keeper of the issuer store
 type Keeper struct {
 	CoinKeeper bank.Keeper
@@ -35,25 +38,29 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-// Get returns the pubkey from the adddress-pubkey relation
-// func (k Keeper) Get(ctx sdk.Context, key string) (/* TODO: Fill out this type */, error) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	var item /* TODO: Fill out this type */
-// 	byteKey := []byte(key)
-// 	err := k.cdc.UnmarshalBinaryLengthPrefixed(store.Get(byteKey), &item)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return item, nil
-// }
+// Set sets a value in the db with a prefixed key
+func (k Keeper) Set(ctx sdk.Context, key []byte, prefix []byte, i interface{}) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set(append(prefix, key...), k.cdc.MustMarshalBinaryLengthPrefixed(i))
+}
 
-// func (k Keeper) set(ctx sdk.Context, key string, value /* TODO: fill out this type */ ) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	bz := k.cdc.MustMarshalBinaryLengthPrefixed(value)
-// 	store.Set([]byte(key), bz)
-// }
+// Get gets an item from the store by bytes
+func (k Keeper) Get(ctx sdk.Context, key []byte, prefix []byte, unmarshal UnmarshalFn) (i interface{}, found bool) {
+	store := ctx.KVStore(k.storeKey)
+	value := store.Get(append(prefix, key...))
 
-// func (k Keeper) delete(ctx sdk.Context, key string) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	store.Delete([]byte(key))
-// }
+	return unmarshal(value)
+}
+
+// GetAll values from with a prefix from the store
+func (k Keeper) GetAll(ctx sdk.Context, prefix []byte, unmarshal UnmarshalFn) (i []interface{}) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		value, _ := unmarshal(iterator.Value())
+		i = append(i, value)
+	}
+	return i
+}

@@ -9,11 +9,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
-	// "github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
-	// sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/allinbits/cosmos-cash-poa/x/issuer/types"
+	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/codec"
+	//sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
@@ -29,9 +28,35 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 	issuerQueryCmd.AddCommand(
 		flags.GetCommands(
-		// this line is used by starport scaffolding
+			GetCmdIssuersAll(queryRoute, cdc),
 		)...,
 	)
 
 	return issuerQueryCmd
+}
+
+func GetCmdIssuersAll(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "issuers",
+		Short: "issuers",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			resKVs, _, err := cliCtx.QuerySubspace(types.IssuersKey, queryRoute)
+			if err != nil {
+				return err
+			}
+
+			var validators []types.Issuer
+			for _, kv := range resKVs {
+				validator := types.Issuer{}
+				cdc.UnmarshalBinaryLengthPrefixed(kv.Value, &validator)
+				validators = append(validators, validator)
+
+			}
+
+			return cliCtx.PrintOutput(validators)
+		},
+	}
 }
