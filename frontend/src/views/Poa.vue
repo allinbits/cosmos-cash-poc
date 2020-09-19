@@ -1,8 +1,8 @@
 <template>
   <div>
     <app-layout>
-      <wallet />
-      <!-- <validator-list -->
+      <poa-validator-list />
+      <poa-vote-list />
     </app-layout>
   </div>
 </template>

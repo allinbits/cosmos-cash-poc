@@ -7,6 +7,7 @@ import { Secp256k1Wallet, SigningCosmosClient, makeCosmoshubPath } from "@cosmjs
 Vue.use(Vuex);
 
 const API = "http://localhost:8080";
+const TENDERMINT = "http://localhost:26657";
 const ADDRESS_PREFIX = "cosmos"
 
 export default new Vuex.Store({
@@ -16,6 +17,11 @@ export default new Vuex.Store({
     chain_id: "",
     data: {},
     client: null,
+    validators: [],
+    poaValidators: [],
+    poaVotes: [],
+    issuers: [],
+    tokens: [],
   },
   mutations: {
     accountUpdate(state, { account }) {
@@ -31,6 +37,21 @@ export default new Vuex.Store({
     },
     clientUpdate(state, { client }) {
       state.client = client;
+    },
+    validatorsUpdate(state, validators) {
+      state.validators = validators;
+    },
+    poaValidatorsUpdate(state, poaValidators) {
+      state.poaValidators = poaValidators;
+    },
+    poaVotesUpdate(state, poaVotes) {
+      state.poaVotes = poaVotes;
+    },
+    issuersUpdate(state, issuers) {
+      state.issuers = issuers;
+    },
+    tokensUpdate(state, tokens) {
+      state.tokens = tokens;
     },
   },
   actions: {
@@ -81,6 +102,26 @@ export default new Vuex.Store({
       const { data } = await axios.post(`${API}/${chain_id}/${type}`, req);
       const { msg, fee, memo } = data.value;
       return await state.client.signAndPost(msg, fee, memo);
+    },
+    async getValidators({ state, commit }, { type, body }) {
+      const { data } = await axios.get(`${TENDERMINT}/validators`);
+      commit("validatorsUpdate", data.result.validators);
+    },
+    async getPoaValidators({ state, commit }) {
+      const { data } = await axios.get(`${API}/poa/validators`);
+      commit("poaValidatorsUpdate", data.result);
+    },
+    async getPoaVotes({ state, commit }) {
+      const { data } = await axios.get(`${API}/poa/votes`);
+      commit("poaVotesUpdate", data.result);
+    },
+    async getIssuers({ state, commit }) {
+      const { data } = await axios.get(`${API}/issuer/issuers`);
+      commit("issuersUpdate", data.result);
+    },
+    async getTokens({ state, commit }, { address }) {
+      const { data } = await axios.get(`${API}/bank/balances/${address}`);
+      commit("tokensUpdate", data.result);
     },
   },
 });
