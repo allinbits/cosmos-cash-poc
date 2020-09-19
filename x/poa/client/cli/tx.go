@@ -37,8 +37,8 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 // GetCmdCreateValidator is the CLI command for sending a CreateValidator transaction
 func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "create-validator [name] [address]",
-		Short: "set the value associated with a name that you own",
+		Use:   "create-validator [name] [public key]",
+		Short: "create a validatator with a name and public key",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -71,7 +71,7 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 func GetCmdVoteValidator(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "vote-validator [validator-name]",
-		Short: "set the value associated with a name that you own",
+		Short: "vote for a validator using their name",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
