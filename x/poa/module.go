@@ -16,6 +16,7 @@ import (
 	"github.com/allinbits/cosmos-cash-poa/x/poa/keeper"
 	"github.com/allinbits/cosmos-cash-poa/x/poa/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	cfg "github.com/tendermint/tendermint/config"
@@ -78,8 +79,6 @@ func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 
 // extra helpers - gen-tx
 
-// TODO: These need to be updated to pass in the correct data
-
 //// CreateValidatorMsgHelpers - used for gen-tx
 func (AppModuleBasic) CreateValidatorMsgHelpers(ipDefault string) (
 	fs *flag.FlagSet, nodeIDFlag, pubkeyFlag, amountFlag, defaultsDesc string) {
@@ -91,8 +90,9 @@ func (AppModuleBasic) CreateValidatorMsgHelpers(ipDefault string) (
 //// PrepareFlagsForTxCreateValidator - used for gen-tx
 func (AppModuleBasic) PrepareFlagsForTxCreateValidator(config *cfg.Config, nodeID,
 	chainID string, valPubKey crypto.PubKey) {
+	viper.Set(flags.FlagChainID, chainID)
+	viper.Set(flags.FlagFrom, viper.GetString(flags.FlagName))
 	viper.Set("pubkey", sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, valPubKey))
-	viper.Set("chain-id", chainID)
 	viper.Set("node-id", nodeID)
 
 }
@@ -106,7 +106,7 @@ func (AppModuleBasic) BuildCreateValidatorMsg(cliCtx context.CLIContext,
 	consAddr := sdk.ValAddress(cliCtx.GetFromAddress())
 	pk, _ := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pkStr)
 
-	msg := types.NewMsgCreateValidatorPOA("args[0]", consAddr, pk, valAddr)
+	msg := types.NewMsgCreateValidatorPOA(consAddr.String(), consAddr, pk, valAddr)
 	ip := viper.GetString("ip")
 	nodeID := viper.GetString("node-id")
 
@@ -123,8 +123,6 @@ type AppModule struct {
 
 	keeper     keeper.Keeper
 	coinKeeper bank.Keeper
-	// TODO: Add keepers that your application depends on
-
 }
 
 // NewAppModule creates a new AppModule object
@@ -133,7 +131,6 @@ func NewAppModule(k keeper.Keeper, bankKeeper bank.Keeper) AppModule {
 		AppModuleBasic: AppModuleBasic{},
 		keeper:         k,
 		coinKeeper:     bankKeeper,
-		// TODO: Add keepers that your application depends on
 	}
 }
 
@@ -170,8 +167,7 @@ func (am AppModule) NewQuerierHandler() sdk.Querier {
 func (am AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState types.GenesisState
 	ModuleCdc.MustUnmarshalJSON(data, &genesisState)
-	InitGenesis(ctx, am.keeper, genesisState)
-	return []abci.ValidatorUpdate{}
+	return InitGenesis(ctx, am.keeper, genesisState)
 }
 
 // ExportGenesis returns the exported genesis state as raw bytes for the poa

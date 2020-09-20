@@ -25,8 +25,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 )
 
@@ -39,7 +39,6 @@ var (
 		genutil.AppModuleBasic{},
 		auth.AppModuleBasic{},
 		bank.AppModuleBasic{},
-		staking.AppModuleBasic{},
 		params.AppModuleBasic{},
 		supply.AppModuleBasic{},
 		poa.AppModuleBasic{},
@@ -47,9 +46,7 @@ var (
 	)
 
 	maccPerms = map[string][]string{
-		auth.FeeCollectorName:     nil,
-		staking.BondedPoolName:    {supply.Burner, supply.Staking},
-		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
+		auth.FeeCollectorName: nil,
 	}
 )
 
@@ -76,7 +73,6 @@ type NewApp struct {
 
 	accountKeeper auth.AccountKeeper
 	bankKeeper    bank.Keeper
-	stakingKeeper staking.Keeper
 	supplyKeeper  supply.Keeper
 	paramsKeeper  params.Keeper
 	poaKeeper     poaKeeper.Keeper
@@ -101,14 +97,13 @@ func NewInitApp(
 	keys := sdk.NewKVStoreKeys(
 		bam.MainStoreKey,
 		auth.StoreKey,
-		staking.StoreKey,
 		supply.StoreKey,
 		params.StoreKey,
 		poatypes.StoreKey,
 		issuertypes.StoreKey,
 	)
 
-	tKeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
+	tKeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
 	var app = &NewApp{
 		BaseApp:        bApp,
@@ -122,7 +117,6 @@ func NewInitApp(
 	app.paramsKeeper = params.NewKeeper(app.cdc, keys[params.StoreKey], tKeys[params.TStoreKey])
 	app.subspaces[auth.ModuleName] = app.paramsKeeper.Subspace(auth.DefaultParamspace)
 	app.subspaces[bank.ModuleName] = app.paramsKeeper.Subspace(bank.DefaultParamspace)
-	app.subspaces[staking.ModuleName] = app.paramsKeeper.Subspace(staking.DefaultParamspace)
 	app.subspaces[poatypes.ModuleName] = app.paramsKeeper.Subspace(poaKeeper.DefaultParamspace)
 
 	app.accountKeeper = auth.NewAccountKeeper(
@@ -146,17 +140,6 @@ func NewInitApp(
 		maccPerms,
 	)
 
-	stakingKeeper := staking.NewKeeper(
-		app.cdc,
-		keys[staking.StoreKey],
-		app.supplyKeeper,
-		app.subspaces[staking.ModuleName],
-	)
-
-	app.stakingKeeper = *stakingKeeper.SetHooks(
-		staking.NewMultiStakingHooks(),
-	)
-
 	app.poaKeeper = poaKeeper.NewKeeper(
 		app.bankKeeper,
 		app.cdc,
@@ -170,24 +153,21 @@ func NewInitApp(
 	)
 
 	app.mm = module.NewManager(
-		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
+		genutil.NewAppModule(app.accountKeeper, app.poaKeeper, app.BaseApp.DeliverTx),
 		auth.NewAppModule(app.accountKeeper),
 		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		poa.NewAppModule(app.poaKeeper, app.bankKeeper),
 		issuer.NewAppModule(app.issuerKeeper, app.bankKeeper),
-		staking.NewAppModule(app.stakingKeeper, app.accountKeeper, app.supplyKeeper),
 	)
 
 	app.mm.SetOrderEndBlockers(poatypes.ModuleName)
 
 	app.mm.SetOrderInitGenesis(
-		staking.ModuleName,
 		auth.ModuleName,
 		bank.ModuleName,
 		poatypes.ModuleName,
 		supply.ModuleName,
-		genutil.ModuleName,
 	)
 
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
@@ -228,7 +208,16 @@ func (app *NewApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.
 
 	app.cdc.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
 
-	return app.mm.InitGenesis(ctx, genesisState)
+	genutilgenesis := genesisState["genutil"]
+	var genUtilGenesisState genutiltypes.GenesisState
+	genutil.ModuleCdc.MustUnmarshalJSON(genutilgenesis, &genUtilGenesisState)
+
+	_ = app.mm.InitGenesis(ctx, genesisState)
+	validatorUpdates := genutil.InitGenesis(ctx, app.cdc, app.poaKeeper, app.BaseApp.DeliverTx, genUtilGenesisState)
+
+	return abci.ResponseInitChain{
+		Validators: validatorUpdates,
+	}
 }
 
 func (app *NewApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
