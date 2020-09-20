@@ -46,6 +46,11 @@ func (k Keeper) GetAllValidators(ctx sdk.Context) (validators []types.Validator)
 func (k Keeper) GetAllAcceptedValidators(ctx sdk.Context) (validators []types.Validator) {
 	val := k.GetAll(ctx, types.ValidatorsKey, k.UnmarshalValidator)
 
+	if len(val) == 1 {
+		return append(validators, val[0].(types.Validator))
+
+	}
+
 	for _, value := range val {
 		validator := value.(types.Validator)
 		if validator.Accepted == true {
