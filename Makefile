@@ -66,7 +66,10 @@ build-linux:
 ###                           Tests & Simulation                            ###
 ###############################################################################
 
-localnet-set-up-consensus:
+localnet-distribute-coins:
+	./scripts/create-and-distribute-coins.sh
+
+localnet-consensus:
 	./scripts/set-up-poa-network.sh
 
 
@@ -107,23 +110,38 @@ send-coin:
 
 ### issuer module commands
 
-create-issuer:
+create-issuer-key:
 	echo "y" | go run cmd/poacli/main.go keys add euro-token-issuer
+
+create-issuer: create-issuer-key
 	go run cmd/poacli/main.go tx issuer create-issuer euro-token-issuer $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) cashmoney 100000000000 --trust-node --from validator --chain-id cash
 
-.PHONY:				\
-	test			\
-	lint			\
-	init-dev 		\
-	init-chain		\
-	create-validator	\
-	query-validator		\
-	query-all-validators	\
-	vote-validator		\
-	query-vote		\
-	query-add-votes		\
-	send-coin		\
-	clean			\
-	export-key		\
-	build-linux		\
-	localnet-start		\
+mint-token: 
+	go run cmd/poacli/main.go tx issuer mint-token cashmoney 100000000000 --trust-node --from euro-token-issuer --chain-id cash
+
+burn-token: 
+	go run cmd/poacli/main.go tx issuer burn-token cashmoney 100000000000 --trust-node --from euro-token-issuer --chain-id cash
+
+query-balance: 
+	go run cmd/poacli/main.go query account $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a)
+
+.PHONY:					\
+	test				\
+	lint				\
+	init-dev 			\
+	init-chain			\
+	create-validator		\
+	query-validator			\
+	query-all-validators		\
+	vote-validator			\
+	query-vote			\
+	query-add-votes			\
+	send-coin			\
+	clean				\
+	export-key			\
+	build-linux			\
+	localnet-start			\
+	localnet-set-up-consensus	\
+	create-issuer-key		\
+	create-issuer			\
+	query-balance			\

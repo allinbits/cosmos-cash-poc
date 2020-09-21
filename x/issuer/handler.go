@@ -17,6 +17,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		switch msg := msg.(type) {
 		case types.MsgCreateIssuer:
 			return handleMsgCreateIssuer(ctx, msg, k)
+		case types.MsgBurnToken:
+			return handleMsgBurnToken(ctx, msg, k)
+		case types.MsgMintToken:
+			return handleMsgMintToken(ctx, msg, k)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -52,6 +56,7 @@ func handleMsgCreateIssuer(ctx sdk.Context, msg types.MsgCreateIssuer, k keeper.
 		sdk.NewEvent(
 			types.EventTypeCreateIssuer,
 			sdk.NewAttribute(types.AttributeKeyIssuerAddress, msg.Address.String()),
+			sdk.NewAttribute(types.AttributeKeyIssuerAmount, msg.Amount),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
 		),
 	})
@@ -59,8 +64,52 @@ func handleMsgCreateIssuer(ctx sdk.Context, msg types.MsgCreateIssuer, k keeper.
 	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
 }
 
-//func handleMsgIssuerBurnToken(ctx sdk.Context, msg msg.MsgCreateToken, k keeper.Keeper) (*sdk.Result, error) {
-//}
+func handleMsgBurnToken(ctx sdk.Context, msg types.MsgBurnToken, k keeper.Keeper) (*sdk.Result, error) {
+	issuer, found := k.GetIssuer(ctx, msg.Owner)
+	if !found {
+		return nil, nil
+	}
 
-//func handleMsgIssuerMintToken(ctx sdk.Context, msg msg.MsgCreateToken, k keeper.Keeper) (*sdk.Result, error) {
-//}
+	amount, err := strconv.Atoi(msg.Amount)
+	if err != nil {
+		return nil, nil
+	}
+
+	k.CoinKeeper.SubtractCoins(ctx, issuer.Address, sdk.NewCoins(sdk.NewInt64Coin(msg.Token, int64(amount))))
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeBurnToken,
+			sdk.NewAttribute(types.AttributeKeyBurnerAddress, msg.Owner.String()),
+			sdk.NewAttribute(types.AttributeKeyBurnerAmount, msg.Amount),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+		),
+	})
+
+	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
+}
+
+func handleMsgMintToken(ctx sdk.Context, msg types.MsgMintToken, k keeper.Keeper) (*sdk.Result, error) {
+	issuer, found := k.GetIssuer(ctx, msg.Owner)
+	if !found {
+		return nil, nil
+	}
+
+	amount, err := strconv.Atoi(msg.Amount)
+	if err != nil {
+		return nil, nil
+	}
+
+	k.CoinKeeper.AddCoins(ctx, issuer.Address, sdk.NewCoins(sdk.NewInt64Coin(msg.Token, int64(amount))))
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeMintToken,
+			sdk.NewAttribute(types.AttributeKeyMinterAddress, msg.Owner.String()),
+			sdk.NewAttribute(types.AttributeKeyMinterAmount, msg.Amount),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+		),
+	})
+
+	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
+}

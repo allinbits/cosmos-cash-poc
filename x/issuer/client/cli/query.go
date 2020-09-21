@@ -48,15 +48,15 @@ func GetCmdIssuersAll(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			var validators []types.Issuer
+			var issuers []types.Issuer
 			for _, kv := range resKVs {
-				validator := types.Issuer{}
-				cdc.UnmarshalBinaryLengthPrefixed(kv.Value, &validator)
-				validators = append(validators, validator)
+				issuer := types.Issuer{}
+				cdc.UnmarshalBinaryLengthPrefixed(kv.Value, &issuer)
+				issuers = append(issuers, issuer)
 
 			}
 
-			return cliCtx.PrintOutput(validators)
+			return cliCtx.PrintOutput(issuers)
 		},
 	}
 }
