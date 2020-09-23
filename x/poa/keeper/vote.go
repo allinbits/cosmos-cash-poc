@@ -40,7 +40,10 @@ func (k Keeper) GetAllVotesForValidator(ctx sdk.Context, name string) (votes []t
 
 	// TODO: Make this nicer
 	for _, value := range val {
-		votes = append(votes, value.(types.Vote))
+		vote := value.(types.Vote)
+		if vote.InFavor == true {
+			votes = append(votes, vote)
+		}
 	}
 
 	return votes

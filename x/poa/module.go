@@ -104,6 +104,7 @@ func (AppModuleBasic) BuildCreateValidatorMsg(cliCtx context.CLIContext,
 
 	valAddr := cliCtx.GetFromAddress()
 	consAddr := sdk.ValAddress(cliCtx.GetFromAddress())
+
 	pk, _ := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pkStr)
 
 	msg := types.NewMsgCreateValidatorPOA(consAddr.String(), consAddr, pk, valAddr)

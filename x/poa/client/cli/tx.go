@@ -28,7 +28,8 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 	poaTxCmd.AddCommand(flags.PostCommands(
 		GetCmdCreateValidator(cdc),
-		GetCmdVoteValidator(cdc),
+		GetCmdVoteValidator(cdc, "vote-validator", true),
+		GetCmdVoteValidator(cdc, "kick-validator", false),
 	)...)
 
 	return poaTxCmd
@@ -68,9 +69,9 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 }
 
 // GetCmdVoteValidator is the CLI command for sending a VoteValidator transaction
-func GetCmdVoteValidator(cdc *codec.Codec) *cobra.Command {
+func GetCmdVoteValidator(cdc *codec.Codec, use string, inFavor bool) *cobra.Command {
 	return &cobra.Command{
-		Use:   "vote-validator [validator-name]",
+		Use:   use + " [validator-name]",
 		Short: "vote for a validator using their name",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -85,7 +86,7 @@ func GetCmdVoteValidator(cdc *codec.Codec) *cobra.Command {
 			accAddr := cliCtx.GetFromAddress()
 			valAddr := sdk.ValAddress(accAddr)
 
-			msg := types.NewMsgVoteValidator(args[0], valAddr, accAddr)
+			msg := types.NewMsgVoteValidator(args[0], valAddr, inFavor, accAddr)
 			err := msg.ValidateBasic()
 			if err != nil {
 				return err

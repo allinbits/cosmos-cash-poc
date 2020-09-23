@@ -20,7 +20,6 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			return handleMsgCreateValidatorPOA(ctx, msg, k)
 		case types.MsgVoteValidator:
 			return handleMsgVoteValidator(ctx, msg, k)
-
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -33,7 +32,7 @@ func handleMsgCreateValidatorPOA(ctx sdk.Context, msg msg.MsgCreateValidatorPOA,
 		return nil, sdkerrors.Wrap(types.ErrBadValidatorAddr, fmt.Sprintf("unrecognized %s validator already exists: %T", types.ModuleName, msg))
 	}
 
-	// TODO: handle descripton properly
+	// TODO: handle description properly
 	validator := types.NewValidator(
 		msg.Name,
 		msg.Address,
@@ -73,7 +72,7 @@ func handleMsgVoteValidator(ctx sdk.Context, msg msg.MsgVoteValidator, k keeper.
 	vote := types.NewVote(
 		msg.Voter,
 		msg.Name,
-		true,
+		msg.InFavor,
 	)
 
 	k.SetVote(ctx, vote)
