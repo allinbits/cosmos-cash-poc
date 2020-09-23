@@ -10,7 +10,7 @@ createValidator() {
 	echo "Creating validator for node $1\n"
 
 	# Create the validator
-	docker exec $1 /bin/sh -c 'poacli tx poa create-validator $(poad tendermint show-address) $(poad tendermint show-validator) -y --trust-node --from validator --chain-id cash --keyring-backend test'
+	docker exec $1 /bin/sh -c 'poacli tx poa create-validator $(poacli keys show validator --bech val -a --keyring-backend test) $(poad tendermint show-validator) -y --trust-node --from validator --chain-id cash --keyring-backend test'
 
 	sleep 5
 }
@@ -18,13 +18,22 @@ createValidator() {
 # Votes for a perspecitve canidate
 # Take 2 args the name of the node voting and the candidate node e.g poadnode0 poadnode1
 voteForValidator() {
-	eval CANDIDATE=$(docker exec $2 /bin/sh -c "poad tendermint show-address")
+	eval CANDIDATE=$(docker exec $2 /bin/sh -c "poacli keys show validator --bech val -a --keyring-backend test")
 	echo "Votee $1 is voting for candidate $2"
 	docker exec -e CANDIDATE=$CANDIDATE $1 /bin/sh -c 'poacli tx poa vote-validator $(echo $CANDIDATE) -y --trust-node --from validator --chain-id cash --keyring-backend test'
 
 	sleep 5
 }
 
+# Kicks for a perspecitve canidate
+# Take 2 args the name of the node voting and the candidate node e.g poadnode0 poadnode1
+kickValidator() {
+	eval CANDIDATE=$(docker exec $2 /bin/sh -c "poacli keys show validator --bech val -a --keyring-backend test")
+	echo "Votee $1 is voting to kick candidate $2"
+	docker exec -e CANDIDATE=$CANDIDATE $1 /bin/sh -c 'poacli tx poa kick-validator $(echo $CANDIDATE) -y --trust-node --from validator --chain-id cash --keyring-backend test'
+
+	sleep 5
+}
 ###############################################################################
 ###                           STEP 1		                            ###
 ###############################################################################
@@ -94,7 +103,11 @@ voteForValidator poadnode2 poadnode1
 # poadnode2 votes for poadnode0 to prove the node is in the consensus
 voteForValidator poadnode2 poadnode0
 
-echo "POA Consensus started with 3 nodes :thumbs_up:\n"
+# kick poadnode2 out of the consensus
+kickValidator poadnode0 poadnode2
+kickValidator poadnode1 poadnode2
+
+echo "POA Consensus started with 2 nodes :thumbs_up:\n"
 
 ## Verify valdiators are in the set by checking the proposer address of the block
 #curl 0.0.0.0:26657/block?height?803 | jq '.result.block.header.proposer_address'

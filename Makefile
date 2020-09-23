@@ -23,6 +23,10 @@ install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/poad
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/poacli
 
+install-debug: go.sum
+	go build -mod=readonly $(BUILD_FLAGS) -gcflags="all=-N -l" ./cmd/poad
+	go build -mod=readonly $(BUILD_FLAGS) -gcflags="all=-N -l" ./cmd/poacli
+
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
 	GO111MODULE=on go mod verify
@@ -88,19 +92,22 @@ export-key:
 ### poa module commands
 
 create-validator:
-	go run cmd/poacli/main.go tx poa create-validator validator $(shell go run cmd/poad/main.go cmd/poad/genaccounts.go tendermint show-validator) --trust-node --from validator --chain-id cash --home ./build/.poad
+	go run cmd/poacli/main.go tx poa create-validator $(shell go run cmd/poacli/main.go keys show validator --bech val -a) $(shell go run cmd/poad/main.go cmd/poad/genaccounts.go tendermint show-validator) --trust-node --from validator --chain-id cash --home ./build/.poad
 
 query-validator:
-	go run cmd/poacli/main.go query poa validator-poa validator --trust-node --chain-id cash --home ./build/.poad
+	go run cmd/poacli/main.go query poa validator-poa $(shell go run cmd/poacli/main.go keys show validator --bech val -a) --trust-node --chain-id cash --home ./build/.poad
 
 query-all-validators:
 	go run cmd/poacli/main.go query poa validators --home ./build/.poad
 
 vote-validator:
-	go run cmd/poacli/main.go tx poa vote-validator validator --trust-node --from validator --chain-id cash --home ./build/.poad
+	go run cmd/poacli/main.go tx poa vote-validator $(shell go run cmd/poacli/main.go keys show validator --bech val -a) --trust-node --from validator --chain-id cash --home ./build/.poad
+
+kick-validator:
+	go run cmd/poacli/main.go tx poa kick-validator $(shell go run cmd/poacli/main.go keys show validator --bech val -a) --trust-node --from validator --chain-id cash --home ./build/.poad
 
 query-vote:
-	go run cmd/poacli/main.go query poa vote-poa validator $(shell go run cmd/poacli/main.go keys show validator --bech val -a) --trust-node --chain-id cash --home ./build/.poad
+	go run cmd/poacli/main.go query poa vote-poa $(shell go run cmd/poacli/main.go keys show validator --bech val -a) $(shell go run cmd/poacli/main.go keys show validator --bech val -a) --trust-node --chain-id cash --home ./build/.poad
 
 query-all-votes:
 	go run cmd/poacli/main.go query poa votes --home ./build/.poad

@@ -30,6 +30,11 @@ func (k Keeper) CalculateValidatorVotes(ctx sdk.Context) {
 		if float32(len(votes)) >= (float32(len(acceptedValidators)))*(float32(qourum)/100) || len(validators) == 1 {
 			validator.Accepted = true
 			k.SetValidator(ctx, validator.Name, validator)
+		} else {
+			if validator.Accepted == true {
+				validator.Accepted = false
+				k.SetValidator(ctx, validator.Name, validator)
+			}
 		}
 	}
 

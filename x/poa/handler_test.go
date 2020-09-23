@@ -79,7 +79,7 @@ func TestHandleVoteValidatorPOA(t *testing.T) {
 	keeper.SetValidator(ctx, name, validator)
 	keeper.CalculateValidatorVotes(ctx)
 
-	msg := msg.NewMsgVoteValidator("name", valAddr, accAddr)
+	msg := msg.NewMsgVoteValidator("name", valAddr, true, accAddr)
 
 	res, err := handleMsgVoteValidator(ctx, msg, keeper)
 

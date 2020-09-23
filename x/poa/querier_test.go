@@ -60,7 +60,7 @@ func TestQueryVote(t *testing.T) {
 
 	keeper.SetValidator(ctx, name, validator)
 
-	msg := msg.NewMsgVoteValidator(name, valAddr, accAddr)
+	msg := msg.NewMsgVoteValidator(name, valAddr, true, accAddr)
 	handleMsgVoteValidator(ctx, msg, keeper)
 
 	bz, _ := cdc.MarshalJSON(types.NewQueryVoteParams(name, valAddr.String()))
