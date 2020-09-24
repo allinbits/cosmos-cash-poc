@@ -46,7 +46,7 @@ lint:
 init-dev: init-chain init-validator
 	
 start-dev:
-	go run cmd/poad/main.go cmd/poad/genaccounts.go start --chain-id=cash cash --home ./build/.poad
+	go run cmd/poad/main.go cmd/poad/genaccounts.go start --home ./build/.poad
 
 init-chain:
 	go run cmd/poad/main.go cmd/poad/genaccounts.go init --chain-id=cash cash --home ./build/.poad
@@ -54,7 +54,7 @@ init-chain:
 
 init-validator:
 	go run cmd/poad/main.go cmd/poad/genaccounts.go add-genesis-account $(shell go run cmd/poacli/main.go keys show validator -a) 1000000000stake --home ./build/.poad
-	go run cmd/poad/main.go cmd/poad/genaccounts.go gentx --name validator --home ./build/.poad
+	go run cmd/poad/main.go cmd/poad/genaccounts.go gentx --name validator --home ./build/.poad --moniker cash --website test.com --identity test --security-contact test@test.com --details atest
 	go run cmd/poad/main.go cmd/poad/genaccounts.go collect-gentxs --home ./build/.poad
 
 clean:
@@ -92,7 +92,7 @@ export-key:
 ### poa module commands
 
 create-validator:
-	go run cmd/poacli/main.go tx poa create-validator $(shell go run cmd/poacli/main.go keys show validator --bech val -a) $(shell go run cmd/poad/main.go cmd/poad/genaccounts.go tendermint show-validator) --trust-node --from validator --chain-id cash --home ./build/.poad
+	go run cmd/poacli/main.go tx poa create-validator $(shell go run cmd/poacli/main.go keys show validator --bech val -a) $(shell go run cmd/poad/main.go cmd/poad/genaccounts.go tendermint show-validator) moniker identity website securityContact details --trust-node --from validator --chain-id cash --home ./build/.poad
 
 query-validator:
 	go run cmd/poacli/main.go query poa validator-poa $(shell go run cmd/poacli/main.go keys show validator --bech val -a) --trust-node --chain-id cash --home ./build/.poad

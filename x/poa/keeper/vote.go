@@ -38,7 +38,6 @@ func (k Keeper) GetAllVotes(ctx sdk.Context) (votes []types.Vote) {
 func (k Keeper) GetAllVotesForValidator(ctx sdk.Context, name string) (votes []types.Vote) {
 	val := k.GetAll(ctx, append(types.VotesKey, []byte(name)...), k.UnmarshalVote)
 
-	// TODO: Make this nicer
 	for _, value := range val {
 		vote := value.(types.Vote)
 		if vote.InFavor == true {

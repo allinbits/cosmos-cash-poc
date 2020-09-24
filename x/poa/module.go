@@ -19,12 +19,24 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	cfg "github.com/tendermint/tendermint/config"
 	"github.com/tendermint/tendermint/crypto"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+)
+
+const (
+	flagPubKey          = "pubkey"
+	flagNodeId          = "node-id"
+	flagIP              = "ip"
+	flagMoniker         = "moniker"
+	flagIdentity        = "identity"
+	flagWebsite         = "website"
+	flagSecurityContact = "security-contact"
+	flagDetails         = "details"
 )
 
 // Type check to ensure the interface is properly implemented
@@ -82,9 +94,16 @@ func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 //// CreateValidatorMsgHelpers - used for gen-tx
 func (AppModuleBasic) CreateValidatorMsgHelpers(ipDefault string) (
 	fs *flag.FlagSet, nodeIDFlag, pubkeyFlag, amountFlag, defaultsDesc string) {
-	viper.Set("ip", ipDefault)
+	viper.Set(flagIP, ipDefault)
 
-	return nil, "node-id", "pubkey", "nil", "nil"
+	fs = flag.NewFlagSet("", flag.ContinueOnError)
+
+	fs.String(flagMoniker, "", "The validator's name")
+	fs.String(flagWebsite, "", "The validator's (optional) website")
+	fs.String(flagSecurityContact, "", "The validator's (optional) security contact email")
+	fs.String(flagDetails, "", "The validator's (optional) details")
+	fs.String(flagIdentity, "", "The (optional) identity signature (ex. UPort or Keybase)")
+	return fs, flagNodeId, flagPubKey, "nil", "nil"
 }
 
 //// PrepareFlagsForTxCreateValidator - used for gen-tx
@@ -92,24 +111,35 @@ func (AppModuleBasic) PrepareFlagsForTxCreateValidator(config *cfg.Config, nodeI
 	chainID string, valPubKey crypto.PubKey) {
 	viper.Set(flags.FlagChainID, chainID)
 	viper.Set(flags.FlagFrom, viper.GetString(flags.FlagName))
-	viper.Set("pubkey", sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, valPubKey))
-	viper.Set("node-id", nodeID)
-
+	viper.Set(flagPubKey, sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, valPubKey))
+	viper.Set(flagNodeId, nodeID)
 }
 
 //// BuildCreateValidatorMsg - used for gen-tx
 func (AppModuleBasic) BuildCreateValidatorMsg(cliCtx context.CLIContext,
 	txBldr authtypes.TxBuilder) (authtypes.TxBuilder, sdk.Msg, error) {
-	pkStr := viper.GetString("pubkey")
+	pkStr := viper.GetString(flagPubKey)
 
 	valAddr := cliCtx.GetFromAddress()
 	consAddr := sdk.ValAddress(cliCtx.GetFromAddress())
 
 	pk, _ := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pkStr)
 
-	msg := types.NewMsgCreateValidatorPOA(consAddr.String(), consAddr, pk, valAddr)
-	ip := viper.GetString("ip")
-	nodeID := viper.GetString("node-id")
+	moniker := viper.GetString(flagMoniker)
+	identity := viper.GetString(flagIdentity)
+	website := viper.GetString(flagWebsite)
+	securityContact := viper.GetString(flagSecurityContact)
+	details := viper.GetString(flagDetails)
+
+	msg := types.NewMsgCreateValidatorPOA(
+		consAddr.String(),
+		consAddr,
+		pk,
+		stakingtypes.NewDescription(moniker, identity, website, securityContact, details),
+		valAddr,
+	)
+	ip := viper.GetString(flagIP)
+	nodeID := viper.GetString(flagNodeId)
 
 	txBldr = txBldr.WithMemo(fmt.Sprintf("%s@%s:26656", nodeID, ip))
 
@@ -185,6 +215,6 @@ func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
 
 // EndBlock returns the end blocker for the poa module. It returns no validator
 // updates.
-func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+func (am AppModule) EndBlock(ctx sdk.Context, req abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return EndBlocker(ctx, am.keeper)
 }

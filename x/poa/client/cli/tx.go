@@ -14,6 +14,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -38,9 +39,9 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 // GetCmdCreateValidator is the CLI command for sending a CreateValidator transaction
 func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "create-validator [name] [public key]",
+		Use:   "create-validator [name] [public key] [moniker] [identity] [website] [security_contract] [details]",
 		Short: "create a validatator with a name and public key",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -57,7 +58,13 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateValidatorPOA(args[0], consAddr, valPubKey, accAddr)
+			msg := types.NewMsgCreateValidatorPOA(
+				args[0],
+				consAddr,
+				valPubKey,
+				stakingtypes.NewDescription(args[2], args[3], args[4], args[5], args[6]),
+				accAddr,
+			)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
