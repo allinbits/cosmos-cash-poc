@@ -48,7 +48,13 @@ func TestHandleCreateValidatorPOA(t *testing.T) {
 	valAddr := sdk.ValAddress(valPubKey.Address().Bytes())
 	accAddr := sdk.AccAddress(valPubKey.Address().Bytes())
 
-	msg := msg.NewMsgCreateValidatorPOA(name, valAddr, valPubKey, accAddr)
+	msg := msg.NewMsgCreateValidatorPOA(
+		name,
+		valAddr,
+		valPubKey,
+		stakingtypes.Description{"nil", "nil", "nil", "nil", "nil"},
+		accAddr,
+	)
 
 	res, err := handleMsgCreateValidatorPOA(ctx, msg, keeper)
 

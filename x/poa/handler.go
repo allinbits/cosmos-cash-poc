@@ -37,7 +37,7 @@ func handleMsgCreateValidatorPOA(ctx sdk.Context, msg msg.MsgCreateValidatorPOA,
 		msg.Name,
 		msg.Address,
 		msg.PubKey,
-		stakingtypes.Description{"nil", "nil", "nil", "nil", "nil"},
+		msg.Description,
 	)
 
 	k.SetValidator(ctx, msg.Name, validator)

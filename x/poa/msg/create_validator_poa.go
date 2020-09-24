@@ -5,31 +5,35 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/tendermint/tendermint/crypto"
 )
 
 // We need to register this msg in the types package to satisfy the types.msg interface: see types/msg.go
 
 type MsgCreateValidatorPOA struct {
-	Name    string         `json:"name"`
-	Address sdk.ValAddress `json:"address"`
-	PubKey  crypto.PubKey  `json:"pubkey"`
-	Owner   sdk.AccAddress `json:"owner"`
+	Name        string                   `json:"name"`
+	Address     sdk.ValAddress           `json:"address"`
+	PubKey      crypto.PubKey            `json:"pubkey"`
+	Description stakingtypes.Description `json:"description"`
+	Owner       sdk.AccAddress           `json:"owner"`
 }
 
 type msgCreateValidatorJSON struct {
-	Name    string         `json:"name"`
-	Address sdk.ValAddress `json:"address"`
-	PubKey  string         `json:"pubkey"`
-	Owner   sdk.AccAddress `json:"owner"`
+	Name        string                   `json:"name"`
+	Address     sdk.ValAddress           `json:"address"`
+	PubKey      string                   `json:"pubkey"`
+	Description stakingtypes.Description `json:"description"`
+	Owner       sdk.AccAddress           `json:"owner"`
 }
 
-func NewMsgCreateValidatorPOA(name string, address sdk.ValAddress, pubKey crypto.PubKey, owner sdk.AccAddress) MsgCreateValidatorPOA {
+func NewMsgCreateValidatorPOA(name string, address sdk.ValAddress, pubKey crypto.PubKey, description stakingtypes.Description, owner sdk.AccAddress) MsgCreateValidatorPOA {
 	return MsgCreateValidatorPOA{
-		Name:    name,
-		Address: address,
-		PubKey:  pubKey,
-		Owner:   owner,
+		Name:        name,
+		Address:     address,
+		PubKey:      pubKey,
+		Description: description,
+		Owner:       owner,
 	}
 }
 
@@ -39,10 +43,11 @@ func NewMsgCreateValidatorPOA(name string, address sdk.ValAddress, pubKey crypto
 // serialization of the MsgCreateValidator type.
 func (msg MsgCreateValidatorPOA) MarshalJSON() ([]byte, error) {
 	return json.Marshal(msgCreateValidatorJSON{
-		Name:    msg.Name,
-		Address: msg.Address,
-		PubKey:  sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, msg.PubKey),
-		Owner:   msg.Owner,
+		Name:        msg.Name,
+		Address:     msg.Address,
+		PubKey:      sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, msg.PubKey),
+		Description: msg.Description,
+		Owner:       msg.Owner,
 	})
 }
 
@@ -61,6 +66,7 @@ func (msg *MsgCreateValidatorPOA) UnmarshalJSON(bz []byte) error {
 	if err != nil {
 		return err
 	}
+	msg.Description = msgCreateValJSON.Description
 	msg.Owner = msgCreateValJSON.Owner
 
 	return nil
