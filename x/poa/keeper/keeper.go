@@ -46,6 +46,11 @@ func (k Keeper) Set(ctx sdk.Context, key []byte, prefix []byte, i interface{}) {
 	store.Set(append(prefix, key...), k.cdc.MustMarshalBinaryLengthPrefixed(i))
 }
 
+func (k Keeper) Delete(ctx sdk.Context, key []byte, prefix []byte) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(append(prefix, key...))
+}
+
 // Get gets an item from the store by bytes
 func (k Keeper) Get(ctx sdk.Context, key []byte, prefix []byte, unmarshal UnmarshalFn) (i interface{}, found bool) {
 	store := ctx.KVStore(k.storeKey)

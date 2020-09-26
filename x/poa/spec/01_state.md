@@ -32,9 +32,9 @@ type Description struct {
 
 Vote objects should be primarily stored and accessed by the `CandidateAddress` & `VoterAddress` to allows the application to handle duplication votes
 
-- Proposal: `0x52 | CandidateAddr | VoterAddr -> amino(Vote)`
+- Vote: `0x52 | VoterAddr | CandidateAddr -> amino(Vote)`
 
-Each proposal state is stored in a Vote struct:
+Each vote state is stored in a Vote struct:
 
 ```go
 type Vote struct {

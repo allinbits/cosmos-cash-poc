@@ -47,13 +47,26 @@ func TestKeeperUpdateValidatorSetFunctions(t *testing.T) {
 		true,
 	)
 
+	vote2 := types.NewVote(
+		valAddr2,
+		"name2",
+		true,
+	)
+
 	// Validator 1 votes for validator 2 to join the consensus
 	keeper.SetVote(ctx, vote)
+
+	// Validator 2 votes for validator 2 to join the consensus
+	keeper.SetVote(ctx, vote2)
 	keeper.CalculateValidatorVotes(ctx)
 
 	// Validator 2 joins the consensus
 	updates = keeper.ApplyAndReturnValidatorSetUpdates(ctx)
-	require.Equal(t, 2, len(updates))
+	require.Equal(t, 1, len(updates))
+
+	// No updates to the set
+	updates = keeper.ApplyAndReturnValidatorSetUpdates(ctx)
+	require.Equal(t, 0, len(updates))
 }
 
 func TestKeeperCalculateValidatorVoteFunction(t *testing.T) {

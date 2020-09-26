@@ -10,7 +10,7 @@ createValidator() {
 	echo "Creating validator for node $1\n"
 
 	# Create the validator
-	docker exec $1 /bin/sh -c 'poacli tx poa create-validator $(poacli keys show validator --bech val -a --keyring-backend test) $(poad tendermint show-validator) moniker identity website security@contact details -y --trust-node --from validator --chain-id cash --keyring-backend test'
+	docker exec -e MONIKER=$1 $1 /bin/sh -c 'poacli tx poa create-validator $(poacli keys show validator --bech val -a --keyring-backend test) $(poad tendermint show-validator) $(echo $MONIKER) identity website security@contact details -y --trust-node --from validator --chain-id cash --keyring-backend test'
 
 	sleep 5
 }

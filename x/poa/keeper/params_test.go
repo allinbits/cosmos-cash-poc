@@ -16,6 +16,6 @@ func TestKeeperParamsFunctions(t *testing.T) {
 	// GetParams test
 	params := keeper.GetParams(ctx)
 
-	require.Equal(t, uint16(50), params.Quorum)
+	require.Equal(t, uint16(49), params.Quorum)
 	require.Equal(t, uint16(100), params.MaxValidators)
 }

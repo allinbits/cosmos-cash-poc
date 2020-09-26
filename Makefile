@@ -70,8 +70,8 @@ build-linux:
 ###                           Tests & Simulation                            ###
 ###############################################################################
 
-localnet-distribute-coins:
-	./scripts/create-and-distribute-coins.sh
+localnet-distribute-tokens:
+	./scripts/create-and-distribute-tokens.sh
 
 localnet-consensus:
 	./scripts/set-up-poa-network.sh
