@@ -78,7 +78,7 @@ func TestABCIValidatorUpdate(t *testing.T) {
 		stakingtypes.Description{"nil", "nil", "nil", "nil", "nil"},
 	)
 
-	abciVal := val1.ABCIValidatorUpdate()
+	abciVal := val1.ABCIValidatorUpdate(10)
 
 	// Test the validator updates correctly when being pased via ABCI
 	require.Equal(t, tmtypes.TM2PB.PubKey(val1.PubKey), abciVal.PubKey)

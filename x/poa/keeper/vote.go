@@ -8,11 +8,17 @@ import (
 // SetVote sets a vote with key as votee and voter combined in a byte array
 func (k Keeper) SetVote(ctx sdk.Context, vote types.Vote) {
 	k.Set(ctx, append([]byte(vote.Name), vote.Voter...), types.VotesKey, vote)
+
+	k.Set(ctx, append(vote.Voter, []byte(vote.Name)...), types.VotesByValidatorKey, vote)
 }
 
 func (k Keeper) GetVote(ctx sdk.Context, key []byte) (types.Vote, bool) {
 	vote, found := k.Get(ctx, key, types.VotesKey, k.UnmarshalVote)
 	return vote.(types.Vote), found
+}
+
+func (k Keeper) DeleteVote(ctx sdk.Context, key []byte) {
+	k.Delete(ctx, key, types.VotesKey)
 }
 
 func (k Keeper) UnmarshalVote(value []byte) (interface{}, bool) {
@@ -46,4 +52,17 @@ func (k Keeper) GetAllVotesForValidator(ctx sdk.Context, name string) (votes []t
 	}
 
 	return votes
+}
+
+func (k Keeper) PurgeAllVotesByValidator(ctx sdk.Context, voter sdk.ValAddress) bool {
+	val := k.GetAll(ctx, append(types.VotesByValidatorKey, voter...), k.UnmarshalVote)
+
+	for _, value := range val {
+		vote := value.(types.Vote)
+		k.DeleteVote(ctx, append([]byte(vote.Name), vote.Voter...))
+	}
+
+	k.Delete(ctx, voter, types.VotesByValidatorKey)
+
+	return true
 }

@@ -9,7 +9,7 @@ import (
 // Default parameter namespace
 const (
 	// Default percentage of votes to join the set
-	DefaultQuorum uint16 = 50
+	DefaultQuorum uint16 = 49
 
 	// Default maximum number of bonded validators
 	DefaultMaxValidators uint16 = 100
