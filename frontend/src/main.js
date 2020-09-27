@@ -4,6 +4,12 @@ import router from "./router";
 import store from "./store";
 import _ from "lodash";
 
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
+
+Vue.use(VueMaterial)
+
 Vue.config.productionTip = false;
 
 Object.defineProperty(Vue.prototype, "$lodash", { value: _ });

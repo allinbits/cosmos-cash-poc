@@ -1,7 +1,13 @@
 <template>
   <div>
-    <div class="container">
-      <div class="h1">{{ address ? "Your Account" : "Sign in" }}</div>
+    <md-card>
+      <md-card-header class="md-layout">
+      <div class="md-layout-item">
+        <div class="md-title">{{ address ? "Your Account" : "Sign in" }}</div>
+        <div class="md-subhead">View your tokens</div>
+      </div>
+      </md-card-header>
+
       <div v-if="!address" class="password">
         <input
           type="text"
@@ -20,31 +26,42 @@
           Sign in
         </div>
       </div>
-      <div v-else class="account">
+      <div v-else class="account endPadding">
         <div class="card">
           <div class="card__row">
-            <div class="card__icon">
-              <icon-user />
+            <div class="md-primary card__icon">
+	      <md-icon class="icon_spacing md-primary">person</md-icon>
             </div>
-            <div class="card__desc">
               {{ address }}
-            </div>
           </div>
-          <div v-if="account.coins" class="card__row">
-            <span>
-              You have
+          <div v-if="account.coins">
+            <span class="md-primary"> 
+		 <md-list>
+		      <md-list-item>
+        		<md-icon class="md-primary"></md-icon>
+        		<span class="md-list-item-text md-subhead">Token Name</span>
+        		<span class="md-list-item-text md-subhead">Amount in Pool</span>
+      			</md-list-item>
+			<md-divider></md-divider>
               <span
-                class="coin__amount"
                 v-for="coin in account.coins"
                 :key="coin.denom"
-                >{{ coin.amount }} {{ coin.denom }}</span
-              >
-              on your balance.
+                >
+		      <md-list-item :key="coin.denom">
+        		<md-icon>request_page</md-icon>
+        		<span class="md-list-item-text">{{coin.denom}}</span>
+        		<span class="md-list-item-text md-primary">{{coin.amount}}</span>
+      			</md-list-item>
+			<md-divider></md-divider>
+	</span>
+		 </md-list>
             </span>
           </div>
         </div>
-      </div>
+
     </div>
+
+      </md-card>
   </div>
 </template>
 
@@ -53,11 +70,12 @@
   margin-bottom: 1.5rem;
 }
 .card {
-  background: rgba(0, 0, 0, 0.03);
   border-radius: 0.25rem;
-  color: rgba(0, 0, 0, 0.5);
   padding: 0.25rem 0.75rem;
   overflow-x: hidden;
+  margin-right: 40px;
+  margin-left: 40px;
+  padding-bottom: 20px;
 }
 .card__row {
   display: flex;
@@ -88,6 +106,9 @@
 .password {
   margin-top: 0.5rem;
   display: flex;
+  margin-left: 40px;
+    margin-right: 40px;
+    padding-bottom: 30px;
 }
 .password__input {
   border: none;
@@ -175,16 +196,16 @@
     transform: translate3d(4px, 0, 0);
   }
 }
+.endPadding{
+padding-bottom: 20px;
+
+}
 </style>
 
 <script>
-import IconUser from "@/components/IconUser.vue";
 import * as bip39 from "bip39";
 
 export default {
-  components: {
-    IconUser
-  },
   data() {
     return {
       password: "",

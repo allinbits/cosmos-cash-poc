@@ -1,95 +1,69 @@
 <template>
   <div>
-    <div class="button_box">
-      <button
-        :class="[
-          'button',
-        ]"
-        @click="getIssuers"
-      >
-        Get Issuers
-      </button>
-    </div>
-    <div>
-       <h3>ISSUER LIST</h3>
-    </div>
-    <div class="issuer_list" v-for="issuer in issuers" >
-      <div :key="issuer.address">
-        <p>Name: {{issuer.name}}</p>
-        <p>Address: {{issuer.address}}</p>
-        <button
-          :class="[
-            'button',
-          ]"
-          @click="getTokens(issuer.address)"
-	>
-	  Token: {{issuer.token}}
-	</button>
-        <div class="token_box" v-for="token in tokens" >
-          <div :key="token.denom">
-            <p>Name: {{token.denom}}</p>
-            <p>Address: {{token.amount}}</p>
-          </div>
-        </div>
+
+    <md-card>
+      <md-card-header class="md-layout">
+      <div class="md-layout-item">
+        <div class="md-title">Issuer List</div>
+        <div class="md-subhead">Each issuer has a trading pool</div>
       </div>
-    </div>
+        <md-button class="md-raised md-primary button_spacing" v-on:click="getIssuers"><md-icon>refresh</md-icon></md-button>
+      </md-card-header>
+
+      <md-card-content>
+        <br />
+         <md-table >
+            <md-table-row>
+              <md-table-head>Name</md-table-head>
+              <md-table-head>Address</md-table-head>
+              <md-table-head>Token</md-table-head>
+            </md-table-row>
+
+            <md-table-row v-for="issuer in issuers" :key="issuer.name">
+              <md-table-cell>{{issuer.name}}</md-table-cell>
+              <md-table-cell class="address">{{issuer.address}}</md-table-cell>
+
+              <md-table-cell  >
+	      <md-menu :md-offset-x="127" :md-offset-y="-36">
+              <md-button md-menu-trigger v-on:click="getTokens(issuer.address)">
+	        <md-icon>request_page</md-icon>
+	      </md-button>
+
+              <md-menu-content >
+                 <div v-for="token in tokens">
+                    <md-menu-item :key="token.denom">
+                      <div>{{token.denom}} - {{token.amount}}</div>
+                    </md-menu-item>
+                  </div>
+              </md-menu-content>
+            </md-menu>
+         </md-table-cell>
+
+            </md-table-row>
+        </md-table>
+      </md-card-content>
+
+
+
+
+      </md-card>
   </div>
 </template>
 
 <style scoped>
 
-.issuer_list {
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-  margin-bottom: 1rem;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  letter-spacing: 0.05em;
-  border-radius: 0.25rem;
-  display: flex;
-}
-.token_box {
-  margin-bottom: 1rem;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  letter-spacing: 0.05em;
-  display: flex;
-}
-.button_box {
-  padding-top: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-button {
-  background: none;
-  border: none;
-  color: rgba(0, 125, 255);
-  padding: 0;
-  font-size: inherit;
-  font-weight: 800;
-  font-family: inherit;
-  text-transform: uppercase;
-  margin-top: 0.5rem;
-  cursor: pointer;
-  transition: opacity 0.1s;
-  letter-spacing: 0.03em;
-  transition: color 0.25s;
-  display: inline-flex;
-  align-items: center;
+.button_spacing {
+ margin-right: 30px;
+ margin-top: 5px;
 }
 </style>
 
 <script>
 
 export default {
+    async created(){
+        this.$store.dispatch("getIssuers", { val: "val" })
+    },
   computed: {
     issuers() {
       return this.$store.state.issuers;
