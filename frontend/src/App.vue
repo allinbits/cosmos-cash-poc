@@ -1,45 +1,32 @@
 <template>
   <div>
     <div class="containerMenu">
-      <h1><router-link class="menu" to="/">Home</router-link></h1>
-      <h1><router-link class="menu" to="/issuer">Issuers</router-link></h1>
-      <h1><router-link class="menu" to="/poa">Consensus</router-link></h1>
+    <md-tabs md-sync-route>
+      <md-tab id="tab-home" class="menu_button" md-label="Home" md-icon="home" to="/" exact></md-tab>
+      <md-tab id="tab-issuer" class="menu_button" md-label="Issuers" md-icon="supervisor_account" to="/issuer"></md-tab>
+      <md-tab id="tab-poa" class="menu_button" md-icon="vpn_lock" md-label="Validators" to="/poa"></md-tab>
+    </md-tabs>
     </div>
     <router-view />
   </div>
 </template>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 body {
   margin: 0;
   font-family: "Inter", "Helvetica", sans-serif;
 }
 .containerMenu {
-  max-width: 900px;
-  width: 100%;
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-  box-sizing: border-box;
   padding-left: 40px;
   padding-right: 40px;
-  box-sizing: border-box;
   display: flex;
-  justify-content: space-around;
 }
-.menu {
-  background: rgba(0, 0, 0, 0.03);
-  text-decoration: none;
-  padding: 0 1.5rem;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: rgba(0, 0, 0, 0.25);
-  text-transform: uppercase;
-  transition: all 0.1s;
+.menu_button {
+width: 100px;
 }
 </style>
 
