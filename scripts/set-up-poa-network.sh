@@ -19,7 +19,7 @@ createValidator() {
 # Take 2 args the name of the node voting and the candidate node e.g poadnode0 poadnode1
 voteForValidator() {
 	eval CANDIDATE=$(docker exec $2 /bin/sh -c "poacli keys show validator --bech val -a --keyring-backend test")
-	echo "Votee $1 is voting for candidate $2"
+	echo "Voter $1 is voting for candidate $2"
 	docker exec -e CANDIDATE=$CANDIDATE $1 /bin/sh -c 'poacli tx poa vote-validator $(echo $CANDIDATE) -y --trust-node --from validator --chain-id cash --keyring-backend test'
 
 	sleep 5

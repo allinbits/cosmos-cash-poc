@@ -9,6 +9,7 @@ import (
 func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []abci.ValidatorUpdate) {
 	validators := k.GetAllValidatorsAcceptedAndInSet(ctx)
 
+	// handle the case if there is only one validator in the set
 	if len(validators) == 1 && validators[0].InSet == false {
 		validators[0].Accepted = true
 		validators[0].InSet = true
@@ -17,11 +18,14 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 	}
 
 	for _, validator := range validators {
+		// validator has been accepted but is not yet in the set
+		// NOTE: maybe this can live in IsInSet fn
 		if validator.Accepted && !validator.InSet {
 			k.SetValidatorIsInSet(ctx, validator.Name, validator, true)
 			updates = append(updates, validator.ABCIValidatorUpdate(10))
 		}
 
+		// validator has been kicked but not yet removed from the set
 		if !validator.Accepted && validator.InSet {
 			k.SetValidatorIsInSet(ctx, validator.Name, validator, false)
 			updates = append(updates, validator.ABCIValidatorUpdate(0))
@@ -37,6 +41,7 @@ func (k Keeper) CalculateValidatorVotes(ctx sdk.Context) {
 	acceptedValidators := k.GetAllAcceptedValidators(ctx)
 	validators := k.GetAllValidators(ctx)
 
+	// NOTE: could we add a vote-validator msg to genesis and be able to remove L43:46
 	if len(validators) == 1 {
 		return
 	}

@@ -37,6 +37,9 @@ func NewMsgCreateValidatorPOA(name string, address sdk.ValAddress, pubKey crypto
 	}
 }
 
+// NOTE: review & update & comment
+// NOTE: use same type and different marshal fn
+
 // Define a custom marshaler here to allow for msg to be used in the genesis file
 
 // MarshalJSON implements the json.Marshaler interface to provide custom JSON
