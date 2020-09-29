@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// TODO: change name to public key of validator
+// TODO: change name to address of validator
 
 // Vote - Contains data that allows validators to vote
 type Vote struct {

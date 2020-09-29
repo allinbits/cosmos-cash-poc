@@ -88,46 +88,6 @@ poad start
 
 <br />
 
-### How to use the application
-
----
-
-#### How to add a validator to the validator set
-
-1. Create a CreateValidatorPOA transaction and submit it to the applicaton
-
-```sh
-poacli tx poa create-validator val1 `hex-encoded-public-key-of-the-validator-you-want-to-vote-for` --trust-node --from validator --chain-id cash
-```
-
-<br />
-
-2. Verfiy that the CreateValidatorPOA tranaction was correctly processed by the application
-
-```sh
-poacli query poa validator-poa val1 --trust-node --chain-id cash
-```
-
-<br />
-
-#### How to vote on a validator to allow the validator to be added to the validator set (consensus)
-
-1. Vote for a validator to join the validator set (consensus)
-
-```sh
-poacli tx poa vote-validator val1 --trust-node --from validator --chain-id cash
-```
-
-<br />
-
-2. Query for the vote to see if the transaction was successful
-
-```sh
-poacli query poa vote-poa val1 `validator address` --trust-node --chain-id cash
-```
-
-<br />
-
 ### How to find more information on the application
 
 ---

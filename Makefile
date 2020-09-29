@@ -1,4 +1,4 @@
-PACKAGES=$(shell go list ./...)
+GACKAGES=$(shell go list ./...)
 
 # TODO: Update the ldflags with the app
 
@@ -112,8 +112,6 @@ query-vote:
 query-all-votes:
 	go run cmd/poacli/main.go query poa votes --home ./build/.poad
 
-send-coin:
-	poacli tx send cosmos1h6c36qvkpdycas468lcfmp6xjl39cwvethemuj cosmos1djh6qxf893a6lk2evecce5cexhvan5tcpnezt0 10000stake --from validator --trust-node --chain-id cash
 
 ### issuer module commands
 
@@ -122,6 +120,12 @@ create-issuer-key:
 
 create-issuer: create-issuer-key
 	go run cmd/poacli/main.go tx issuer create-issuer euro-token-issuer $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) cashmoney 100000000000 --trust-node --from validator --chain-id cash
+
+send-token:
+	poacli tx send $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) $(shell go run cmd/poacli/main.go keys show validator -a) 50000000cashmoney --from euro-token-issuer -y --trust-node --chain-id cash
+
+send-token-back:
+	poacli tx send $(shell go run cmd/poacli/main.go keys show validator -a) $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) 50000000cashmoney --from euro-token-issuer -y --trust-node --chain-id cash
 
 mint-token: 
 	go run cmd/poacli/main.go tx issuer mint-token cashmoney 100000000000 --trust-node --from euro-token-issuer --chain-id cash

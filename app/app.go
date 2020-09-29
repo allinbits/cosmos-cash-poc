@@ -11,10 +11,10 @@ import (
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/allinbits/cosmos-cash-poa/x/issuer"
-	issuerKeeper "github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
+	issuerkeeper "github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
 	issuertypes "github.com/allinbits/cosmos-cash-poa/x/issuer/types"
 	"github.com/allinbits/cosmos-cash-poa/x/poa"
-	poaKeeper "github.com/allinbits/cosmos-cash-poa/x/poa/keeper"
+	poakeeper "github.com/allinbits/cosmos-cash-poa/x/poa/keeper"
 	poatypes "github.com/allinbits/cosmos-cash-poa/x/poa/types"
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -75,8 +75,8 @@ type NewApp struct {
 	bankKeeper    bank.Keeper
 	supplyKeeper  supply.Keeper
 	paramsKeeper  params.Keeper
-	poaKeeper     poaKeeper.Keeper
-	issuerKeeper  issuerKeeper.Keeper
+	poaKeeper     poakeeper.Keeper
+	issuerKeeper  issuerkeeper.Keeper
 	mm            *module.Manager
 
 	sm *module.SimulationManager
@@ -117,7 +117,7 @@ func NewInitApp(
 	app.paramsKeeper = params.NewKeeper(app.cdc, keys[params.StoreKey], tKeys[params.TStoreKey])
 	app.subspaces[auth.ModuleName] = app.paramsKeeper.Subspace(auth.DefaultParamspace)
 	app.subspaces[bank.ModuleName] = app.paramsKeeper.Subspace(bank.DefaultParamspace)
-	app.subspaces[poatypes.ModuleName] = app.paramsKeeper.Subspace(poaKeeper.DefaultParamspace)
+	app.subspaces[poatypes.ModuleName] = app.paramsKeeper.Subspace(poakeeper.DefaultParamspace)
 
 	app.accountKeeper = auth.NewAccountKeeper(
 		app.cdc,
@@ -140,13 +140,13 @@ func NewInitApp(
 		maccPerms,
 	)
 
-	app.poaKeeper = poaKeeper.NewKeeper(
+	app.poaKeeper = poakeeper.NewKeeper(
 		app.bankKeeper,
 		app.cdc,
 		keys[poatypes.StoreKey],
 		app.subspaces[poatypes.ModuleName],
 	)
-	app.issuerKeeper = issuerKeeper.NewKeeper(
+	app.issuerKeeper = issuerkeeper.NewKeeper(
 		app.bankKeeper,
 		app.cdc,
 		keys[issuertypes.StoreKey],
@@ -177,9 +177,10 @@ func NewInitApp(
 	app.SetEndBlocker(app.EndBlocker)
 
 	app.SetAnteHandler(
-		auth.NewAnteHandler(
+		NewAnteHandler(
 			app.accountKeeper,
 			app.supplyKeeper,
+			app.issuerKeeper,
 			auth.DefaultSigVerificationGasConsumer,
 		),
 	)

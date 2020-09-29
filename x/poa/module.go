@@ -115,6 +115,8 @@ func (AppModuleBasic) PrepareFlagsForTxCreateValidator(config *cfg.Config, nodeI
 	viper.Set(flagNodeId, nodeID)
 }
 
+// NOTE: abstact to their own file
+
 //// BuildCreateValidatorMsg - used for gen-tx
 func (AppModuleBasic) BuildCreateValidatorMsg(cliCtx context.CLIContext,
 	txBldr authtypes.TxBuilder) (authtypes.TxBuilder, sdk.Msg, error) {
