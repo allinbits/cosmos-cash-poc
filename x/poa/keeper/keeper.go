@@ -13,7 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank"
 )
 
-// SelectorFn allowsi an entity to be selected by certain conditions
+// SelectorFn allows an entity to be selected by certain conditions
 type SelectorFn func(interface{}) bool
 
 // UnmarshalFn is a generic function to unmarshal bytes
