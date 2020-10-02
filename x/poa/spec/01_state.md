@@ -7,6 +7,7 @@
 Validators objects should be primarily stored and accessed by the `Name`, or `Address` an SDK validator address for the operator of the validator.
 
 - Validators: `0x51 | Name -> amino(Validator)`
+- Validators: `0x52 | Address -> amino(Validator)`
 
 ```go
 type Validator struct {
@@ -30,9 +31,10 @@ type Description struct {
 
 ---
 
-Vote objects should be primarily stored and accessed by the `CandidateAddress` & `VoterAddress` to allows the application to handle duplication votes
+Vote objects should be primarily stored and accessed by the `CandidateAddress` & `VoterAddress` this allows the application to handle duplication votes
 
-- Vote: `0x52 | VoterAddr | CandidateAddr -> amino(Vote)`
+- Vote: `0x53 | VoterAddr | CandidateAddr -> amino(Vote)`
+- Vote: `0x54 | CandidateAddr | VoterAddr -> amino(Vote)`
 
 Each vote state is stored in a Vote struct:
 

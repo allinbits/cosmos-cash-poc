@@ -11,10 +11,15 @@ State transitions in validators are performed on every `EndBlock` and are used
 
 ### `Accepted` **||** `Not Accepted`
 
-When a validator is accepted it is added the Tendermint set. The following operations occur:
+When a validator is accepted after recieving the correct amount of votes. The following operations occur:
 
 - set `Validator.Accepted` to true
-- update the `Validator` object for this validator
+
+### `InSet` **||** `Not InSet`
+
+When a validator is added the Tendermint set. The following operations occur:
+
+- set `Validator.InSet` to true
 
 ## Votes
 
