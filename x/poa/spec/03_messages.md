@@ -40,4 +40,4 @@ type MsgVoteValidator struct {
 }
 ```
 
-This updates the `Vote` object and creates one if it does not exist. If `inFavor` is true
+This message updates the `Vote` object or creates one if it does not exist. 

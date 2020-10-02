@@ -2,7 +2,7 @@
 
 At each ABCI `BeginBlock` call, the operations to count votes are executed.
 
-## Proposal changes
+## Vote changes
 
 ### Validators changes
 
