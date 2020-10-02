@@ -61,9 +61,27 @@ func DefaultParams() Params {
 }
 
 func validateQuorum(i interface{}) error {
+	val, ok := i.(uint16)
+	if !ok {
+		return fmt.Errorf("invalid type: %T", val)
+	}
+
+	if val > 100 {
+		return fmt.Errorf("quorum must be less than 100: %d", val)
+	}
+
 	return nil
 }
 
 func validateMaxValidators(i interface{}) error {
+	val, ok := i.(uint16)
+	if !ok {
+		return fmt.Errorf("invalid type: %T", i)
+	}
+
+	if val < 0 || val > 100 {
+		return fmt.Errorf("max validators must between 0 and 100: %d", val)
+	}
+
 	return nil
 }

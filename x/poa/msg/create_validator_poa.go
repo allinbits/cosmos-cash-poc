@@ -5,12 +5,14 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/tendermint/tendermint/crypto"
 )
 
 // We need to register this msg in the types package to satisfy the types.msg interface: see types/msg.go
 
+// MsgCreateValidatorPOA defines the message that creates a consensus validator
 type MsgCreateValidatorPOA struct {
 	Name        string                   `json:"name"`
 	Address     sdk.ValAddress           `json:"address"`
@@ -19,6 +21,8 @@ type MsgCreateValidatorPOA struct {
 	Owner       sdk.AccAddress           `json:"owner"`
 }
 
+// NOTE: can we use same type and different marshal fn
+// msgCreateValidator is used in the custom unmarshal functon to unmarshal the public key
 type msgCreateValidatorJSON struct {
 	Name        string                   `json:"name"`
 	Address     sdk.ValAddress           `json:"address"`
@@ -37,13 +41,9 @@ func NewMsgCreateValidatorPOA(name string, address sdk.ValAddress, pubKey crypto
 	}
 }
 
-// NOTE: review & update & comment
-// NOTE: use same type and different marshal fn
-
-// Define a custom marshaler here to allow for msg to be used in the genesis file
-
 // MarshalJSON implements the json.Marshaler interface to provide custom JSON
 // serialization of the MsgCreateValidator type.
+// We define a custom marshaler here to allow for msg to be used in the genesis file
 func (msg MsgCreateValidatorPOA) MarshalJSON() ([]byte, error) {
 	return json.Marshal(msgCreateValidatorJSON{
 		Name:        msg.Name,
@@ -55,7 +55,7 @@ func (msg MsgCreateValidatorPOA) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON implements the json.Unmarshaler interface to provide custom
-// JSON deserialization of the MsgCreateValidator type.
+// JSON deserialization of the MsgCreateValidatorPOA type.
 func (msg *MsgCreateValidatorPOA) UnmarshalJSON(bz []byte) error {
 	var msgCreateValJSON msgCreateValidatorJSON
 	if err := json.Unmarshal(bz, &msgCreateValJSON); err != nil {
@@ -83,6 +83,16 @@ func (msg MsgCreateValidatorPOA) Type() string { return "create_validator_poa" }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreateValidatorPOA) ValidateBasic() error {
+	if msg.Name == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty name")
+	}
+	if msg.Address.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "address not specified")
+	}
+	if msg.Description == (stakingtypes.Description{}) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty description")
+	}
+
 	return nil
 }
 
@@ -93,7 +103,6 @@ func (msg MsgCreateValidatorPOA) GetSigners() []sdk.AccAddress {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgCreateValidatorPOA) GetSignBytes() []byte {
-	// TODO: We can use normal json encode here, no need for amino
 	ModuleCdc := codec.New()
 	ModuleCdc.RegisterConcrete(MsgCreateValidatorPOA{}, "poa/MsgCreateValidatorPOA", nil)
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))

@@ -36,10 +36,11 @@ func TestKeeperUpdateValidatorSetFunctions(t *testing.T) {
 	// Set a value in the store
 	keeper.SetValidator(ctx, validator.Name, validator)
 	keeper.CalculateValidatorVotes(ctx)
-	keeper.SetValidator(ctx, validator2.Name, validator2)
 
 	updates := keeper.ApplyAndReturnValidatorSetUpdates(ctx)
 	require.Equal(t, 1, len(updates))
+
+	keeper.SetValidator(ctx, validator2.Name, validator2)
 
 	vote := types.NewVote(
 		valAddr,
@@ -95,6 +96,7 @@ func TestKeeperCalculateValidatorVoteFunction(t *testing.T) {
 
 	// Set a value in the store
 	keeper.SetValidator(ctx, validator.Name, validator)
+	keeper.ApplyAndReturnValidatorSetUpdates(ctx)
 	keeper.CalculateValidatorVotes(ctx)
 
 	// Check to see if validator is accepted

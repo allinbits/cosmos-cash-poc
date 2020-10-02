@@ -30,28 +30,36 @@ func (k Keeper) UnmarshalVote(value []byte) (interface{}, bool) {
 	return vote, true
 }
 
-func (k Keeper) GetAllVotes(ctx sdk.Context) (votes []types.Vote) {
+// VoteSelectorFn allows validators to be selected by certain conditions
+type VoteSelectorFn func(vote types.Vote) bool
+
+func (k Keeper) GetAllVotesWithCondition(ctx sdk.Context, voteSelector VoteSelectorFn) (votes []types.Vote) {
 	val := k.GetAll(ctx, types.VotesKey, k.UnmarshalVote)
 
-	// TODO: Make this nicer
 	for _, value := range val {
-		votes = append(votes, value.(types.Vote))
+		vote := value.(types.Vote)
+		if voteSelector(vote) {
+			votes = append(votes, value.(types.Vote))
+		}
 	}
 
 	return votes
 }
 
-func (k Keeper) GetAllVotesForValidator(ctx sdk.Context, name string) (votes []types.Vote) {
-	val := k.GetAll(ctx, append(types.VotesKey, []byte(name)...), k.UnmarshalVote)
-
-	for _, value := range val {
-		vote := value.(types.Vote)
-		if vote.InFavor == true {
-			votes = append(votes, vote)
-		}
+func (k Keeper) GetAllVotes(ctx sdk.Context) (votes []types.Vote) {
+	var selectAllVotes VoteSelectorFn = func(votes types.Vote) bool {
+		return true
 	}
 
-	return votes
+	return k.GetAllVotesWithCondition(ctx, selectAllVotes)
+}
+
+func (k Keeper) GetAllVotesForValidator(ctx sdk.Context, name string) (votes []types.Vote) {
+	var selectAllVotesForValidators VoteSelectorFn = func(vote types.Vote) bool {
+		return vote.InFavor == true
+	}
+
+	return k.GetAllVotesWithCondition(ctx, selectAllVotesForValidators)
 }
 
 func (k Keeper) PurgeAllVotesByValidator(ctx sdk.Context, voter sdk.ValAddress) bool {
