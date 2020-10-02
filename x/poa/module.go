@@ -90,6 +90,7 @@ func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 }
 
 // extra helpers - gen-tx
+// NOTE: abstact these functions to their own file
 
 //// CreateValidatorMsgHelpers - used for gen-tx
 func (AppModuleBasic) CreateValidatorMsgHelpers(ipDefault string) (
@@ -114,8 +115,6 @@ func (AppModuleBasic) PrepareFlagsForTxCreateValidator(config *cfg.Config, nodeI
 	viper.Set(flagPubKey, sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, valPubKey))
 	viper.Set(flagNodeId, nodeID)
 }
-
-// NOTE: abstact to their own file
 
 //// BuildCreateValidatorMsg - used for gen-tx
 func (AppModuleBasic) BuildCreateValidatorMsg(cliCtx context.CLIContext,

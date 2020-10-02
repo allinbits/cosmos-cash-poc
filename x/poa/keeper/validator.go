@@ -13,7 +13,7 @@ func (k Keeper) SetValidator(ctx sdk.Context, key string, validator types.Valida
 	k.Set(ctx, validator.Address, types.ValidatorsByAddressKey, validator)
 }
 
-// NOTE: maybe this could be a state
+// NOTE: could this be a state
 
 // SetValidatorIsInSet after a validator has been accepted and not added to the set we need this function
 func (k Keeper) SetValidatorIsInSet(ctx sdk.Context, key string, validator types.Validator, isInSet bool) {
@@ -21,9 +21,16 @@ func (k Keeper) SetValidatorIsInSet(ctx sdk.Context, key string, validator types
 	k.SetValidator(ctx, validator.Name, validator)
 }
 
-// SetValidatorIsAccepted when the validator is accepeted into the consensus Accepted is set to true
+// SetValidatorIsAccepted when the validator is accepeted into the consensus accepted is set to true
 func (k Keeper) SetValidatorIsAccepted(ctx sdk.Context, key string, validator types.Validator, isAccepted bool) {
 	validator.Accepted = isAccepted
+	k.SetValidator(ctx, validator.Name, validator)
+}
+
+// SetValidatorIsAccepted when the validator is accepeted into the consensus accepted is set to true and is in the validator set
+func (k Keeper) SetValidatorIsAcceptedAndInSet(ctx sdk.Context, key string, validator types.Validator, isAccepted bool, isInSet bool) {
+	validator.Accepted = isAccepted
+	validator.InSet = isInSet
 	k.SetValidator(ctx, validator.Name, validator)
 }
 

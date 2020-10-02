@@ -1,4 +1,4 @@
-GACKAGES=$(shell go list ./...)
+PACKAGES=$(shell go list ./...)
 
 # TODO: Update the ldflags with the app
 

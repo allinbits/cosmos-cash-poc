@@ -8,18 +8,21 @@ import (
 // ApplyAndReturnValidatorSetUpdates at the end of every block we update and return the validator set
 func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []abci.ValidatorUpdate) {
 	validators := k.GetAllValidatorsAcceptedAndInSet(ctx)
+	maxVals := k.GetParams(ctx).MaxValidators
+
+	// if there are more validators then allowed in the set
+	if len(validators) >= int(maxVals) {
+		return updates
+	}
 
 	// handle the case if there is only one validator in the set
-	if len(validators) == 1 && validators[0].InSet == false {
-		validators[0].Accepted = true
-		validators[0].InSet = true
-		k.SetValidator(ctx, validators[0].Name, validators[0])
+	if len(validators) == 1 && !validators[0].InSet {
+		k.SetValidatorIsAcceptedAndInSet(ctx, validators[0].Name, validators[0], true, true)
 		return append(updates, validators[0].ABCIValidatorUpdate(10))
 	}
 
 	for _, validator := range validators {
 		// validator has been accepted but is not yet in the set
-		// NOTE: maybe this can live in IsInSet fn
 		if validator.Accepted && !validator.InSet {
 			k.SetValidatorIsInSet(ctx, validator.Name, validator, true)
 			updates = append(updates, validator.ABCIValidatorUpdate(10))

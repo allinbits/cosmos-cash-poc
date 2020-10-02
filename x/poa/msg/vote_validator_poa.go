@@ -49,7 +49,6 @@ func (msg MsgVoteValidator) GetSigners() []sdk.AccAddress {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgVoteValidator) GetSignBytes() []byte {
-	// TODO: We can use normal json encode here, no need for amino
 	ModuleCdc := codec.New()
 	ModuleCdc.RegisterConcrete(MsgVoteValidator{}, "poa/MsgVoteValidator", nil)
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))

@@ -32,7 +32,6 @@ func handleMsgCreateValidatorPOA(ctx sdk.Context, msg msg.MsgCreateValidatorPOA,
 		return nil, sdkerrors.Wrap(types.ErrBadValidatorAddr, fmt.Sprintf("unrecognized %s validator already exists: %T", types.ModuleName, msg))
 	}
 
-	// TODO: handle description properly
 	validator := types.NewValidator(
 		msg.Name,
 		msg.Address,

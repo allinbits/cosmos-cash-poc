@@ -25,7 +25,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
-	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 )
@@ -163,11 +162,14 @@ func NewInitApp(
 
 	app.mm.SetOrderEndBlockers(poatypes.ModuleName)
 
+	genutil.ModuleCdc = app.cdc
+
 	app.mm.SetOrderInitGenesis(
 		auth.ModuleName,
 		bank.ModuleName,
 		poatypes.ModuleName,
 		supply.ModuleName,
+		genutil.ModuleName,
 	)
 
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
@@ -209,16 +211,7 @@ func (app *NewApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.
 
 	app.cdc.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
 
-	genutilgenesis := genesisState["genutil"]
-	var genUtilGenesisState genutiltypes.GenesisState
-	genutil.ModuleCdc.MustUnmarshalJSON(genutilgenesis, &genUtilGenesisState)
-
-	_ = app.mm.InitGenesis(ctx, genesisState)
-	validatorUpdates := genutil.InitGenesis(ctx, app.cdc, app.poaKeeper, app.BaseApp.DeliverTx, genUtilGenesisState)
-
-	return abci.ResponseInitChain{
-		Validators: validatorUpdates,
-	}
+	return app.mm.InitGenesis(ctx, genesisState)
 }
 
 func (app *NewApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
