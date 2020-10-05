@@ -15,7 +15,7 @@ import (
 
 	"github.com/allinbits/cosmos-cash-poa/app"
 
-	poacli "github.com/allinbits/cosmos-cash-poa/x/poa/client/cli"
+	poacli "github.com/allinbits/modules/poa/client/cli"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client/debug"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -25,7 +25,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
-	"github.com/allinbits/cosmos-cash-poa/x/poa"
+	"github.com/allinbits/modules/poa"
 )
 
 const flagInvCheckPeriod = "inv-check-period"

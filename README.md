@@ -88,11 +88,3 @@ poad start
 
 <br />
 
-### How to find more information on the application
-
----
-
-Please view to Proof of Authority module spec for more details on the commands defined in the `How to` sections above
-
-> **[Link to Spec](./x/poa/spec/README.md)**
-
