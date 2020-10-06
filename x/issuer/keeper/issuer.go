@@ -23,9 +23,14 @@ func (k Keeper) GetIssuerByToken(ctx sdk.Context, token string) (types.Issuer, b
 
 func (k Keeper) UnmarshalIssuer(value []byte) (interface{}, bool) {
 	issuer := types.Issuer{}
-	err := k.cdc.UnmarshalBinaryLengthPrefixed(value, &issuer)
+	err := k.cdc.UnmarshalBinaryBare(value, &issuer)
 	if err != nil {
 		return types.Issuer{}, false
 	}
+
+	if issuer.Address.Empty() {
+		return types.Issuer{}, false
+	}
+
 	return issuer, true
 }

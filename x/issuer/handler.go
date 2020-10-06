@@ -65,7 +65,7 @@ func handleMsgCreateIssuer(ctx sdk.Context, msg types.MsgCreateIssuer, k keeper.
 }
 
 func handleMsgBurnToken(ctx sdk.Context, msg types.MsgBurnToken, k keeper.Keeper) (*sdk.Result, error) {
-	issuer, found := k.GetIssuer(ctx, msg.Owner)
+	issuer, found := k.GetIssuer(ctx, msg.Issuer)
 	if !found {
 		return nil, nil
 	}
@@ -80,9 +80,9 @@ func handleMsgBurnToken(ctx sdk.Context, msg types.MsgBurnToken, k keeper.Keeper
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeBurnToken,
-			sdk.NewAttribute(types.AttributeKeyBurnerAddress, msg.Owner.String()),
+			sdk.NewAttribute(types.AttributeKeyBurnerAddress, msg.Issuer.String()),
 			sdk.NewAttribute(types.AttributeKeyBurnerAmount, msg.Amount),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Issuer.String()),
 		),
 	})
 
@@ -90,7 +90,7 @@ func handleMsgBurnToken(ctx sdk.Context, msg types.MsgBurnToken, k keeper.Keeper
 }
 
 func handleMsgMintToken(ctx sdk.Context, msg types.MsgMintToken, k keeper.Keeper) (*sdk.Result, error) {
-	issuer, found := k.GetIssuer(ctx, msg.Owner)
+	issuer, found := k.GetIssuer(ctx, msg.Issuer)
 	if !found {
 		return nil, nil
 	}
@@ -105,9 +105,9 @@ func handleMsgMintToken(ctx sdk.Context, msg types.MsgMintToken, k keeper.Keeper
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeMintToken,
-			sdk.NewAttribute(types.AttributeKeyMinterAddress, msg.Owner.String()),
+			sdk.NewAttribute(types.AttributeKeyMinterAddress, msg.Issuer.String()),
 			sdk.NewAttribute(types.AttributeKeyMinterAmount, msg.Amount),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Issuer.String()),
 		),
 	})
 
