@@ -133,8 +133,14 @@ mint-token:
 burn-token: 
 	go run cmd/poacli/main.go tx issuer burn-token cashmoney 100000000000 --trust-node --from euro-token-issuer --chain-id cash
 
+freeze-token: 
+	go run cmd/poacli/main.go tx issuer freeze-token cashmoney --trust-node --from euro-token-issuer --chain-id cash
+
+unfreeze-token: 
+	go run cmd/poacli/main.go tx issuer unfreeze-token cashmoney --trust-node --from euro-token-issuer --chain-id cash
+
 query-balance: 
-	go run cmd/poacli/main.go query account $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a)
+	go run cmd/poacli/main.go query account $(shell go run cmd/poacli/main.go keys show validator -a)
 
 .PHONY:					\
 	test				\
