@@ -30,6 +30,8 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 		GetCmdCreateIssuer(cdc),
 		GetCmdMintToken(cdc),
 		GetCmdBurnToken(cdc),
+		GetCmdFreezeToken(cdc),
+		GetCmdUnfreezeToken(cdc),
 	)...)
 
 	return issuerTxCmd
@@ -114,6 +116,62 @@ func GetCmdBurnToken(cdc *codec.Codec) *cobra.Command {
 			accAddr := cliCtx.GetFromAddress()
 
 			msg := types.NewMsgBurnToken(args[0], args[1], accAddr)
+			err := msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+// GetCmdFreezeToken is the CLI command for sending a FreezeToken transaction
+func GetCmdFreezeToken(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "freeze-token [token]",
+		Short: "freeze token",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			// if err := cliCtx.EnsureAccountExists(); err != nil {
+			// 	return err
+			// }
+
+			accAddr := cliCtx.GetFromAddress()
+
+			msg := types.NewMsgFreezeToken(args[0], accAddr)
+			err := msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+// GetCmdUnfreezeToken is the CLI command for sending a UnfreezeToken transaction
+func GetCmdUnfreezeToken(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "unfreeze-token [token]",
+		Short: "unfreeze token",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			// if err := cliCtx.EnsureAccountExists(); err != nil {
+			// 	return err
+			// }
+
+			accAddr := cliCtx.GetFromAddress()
+
+			msg := types.NewMsgUnfreezeToken(args[0], accAddr)
 			err := msg.ValidateBasic()
 			if err != nil {
 				return err
