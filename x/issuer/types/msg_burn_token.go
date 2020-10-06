@@ -9,14 +9,14 @@ import (
 type MsgBurnToken struct {
 	Token  string         `json:"token"`
 	Amount string         `json:"amount"`
-	Owner  sdk.AccAddress `json:"owner"`
+	Issuer sdk.AccAddress `json:"issuer"`
 }
 
-func NewMsgBurnToken(token string, amount string, owner sdk.AccAddress) MsgBurnToken {
+func NewMsgBurnToken(token string, amount string, issuer sdk.AccAddress) MsgBurnToken {
 	return MsgBurnToken{
 		Token:  token,
 		Amount: amount,
-		Owner:  owner,
+		Issuer: issuer,
 	}
 }
 
@@ -33,7 +33,7 @@ func (msg MsgBurnToken) ValidateBasic() error {
 
 // GetSigners defines whose signature is required
 func (msg MsgBurnToken) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Owner}
+	return []sdk.AccAddress{msg.Issuer}
 }
 
 // GetSignBytes encodes the message for signing

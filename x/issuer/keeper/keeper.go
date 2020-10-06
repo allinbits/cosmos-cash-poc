@@ -41,7 +41,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 // Set sets a value in the db with a prefixed key
 func (k Keeper) Set(ctx sdk.Context, key []byte, prefix []byte, i interface{}) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set(append(prefix, key...), k.cdc.MustMarshalBinaryLengthPrefixed(i))
+	store.Set(append(prefix, key...), k.cdc.MustMarshalBinaryBare(i))
 }
 
 // Get gets an item from the store by bytes
