@@ -29,6 +29,7 @@ func (difd DeductIssuerFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 		if msg.Type() == "send" {
 			sendMsg := msg.(bank.MsgSend)
 			issuer, found := difd.ik.GetIssuerByToken(ctx, sendMsg.Amount[0].Denom)
+
 			if found {
 				difd.ik.CoinKeeper.SendCoins(ctx, sendMsg.FromAddress, issuer.Address, sdk.NewCoins(sdk.NewInt64Coin(issuer.Token, int64(issuer.Fee))))
 			}

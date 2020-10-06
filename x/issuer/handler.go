@@ -21,6 +21,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			return handleMsgBurnToken(ctx, msg, k)
 		case types.MsgMintToken:
 			return handleMsgMintToken(ctx, msg, k)
+		case types.MsgFreezeToken:
+			return handleMsgFreezeToken(ctx, msg, k)
+		case types.MsgUnfreezeToken:
+			return handleMsgUnfreezeToken(ctx, msg, k)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -108,6 +112,46 @@ func handleMsgMintToken(ctx sdk.Context, msg types.MsgMintToken, k keeper.Keeper
 			sdk.NewAttribute(types.AttributeKeyMinterAddress, msg.Issuer.String()),
 			sdk.NewAttribute(types.AttributeKeyMinterAmount, msg.Amount),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Issuer.String()),
+		),
+	})
+
+	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
+}
+
+func handleMsgFreezeToken(ctx sdk.Context, msg types.MsgFreezeToken, k keeper.Keeper) (*sdk.Result, error) {
+	issuer, found := k.GetIssuer(ctx, msg.Issuer)
+	if !found {
+		return nil, nil
+	}
+
+	issuer.State = types.FROZEN
+	k.SetIssuer(ctx, msg.Issuer, issuer)
+	k.CoinKeeper.SetSendEnabled(ctx, false)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeFreezeToken,
+			sdk.NewAttribute(types.AttributeKeyIssuerAddress, msg.Issuer.String()),
+		),
+	})
+
+	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
+}
+
+func handleMsgUnfreezeToken(ctx sdk.Context, msg types.MsgUnfreezeToken, k keeper.Keeper) (*sdk.Result, error) {
+	issuer, found := k.GetIssuer(ctx, msg.Issuer)
+	if !found {
+		return nil, nil
+	}
+
+	issuer.State = types.ACCEPTED
+	k.SetIssuer(ctx, msg.Issuer, issuer)
+	k.CoinKeeper.SetSendEnabled(ctx, true)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeUnfreezeToken,
+			sdk.NewAttribute(types.AttributeKeyIssuerAddress, msg.Issuer.String()),
 		),
 	})
 
