@@ -12,6 +12,7 @@ func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(types.MsgBurnToken{}, "issuer/MsgBurnToken", nil)
 	cdc.RegisterConcrete(types.MsgFreezeToken{}, "issuer/MsgFreezeToken", nil)
 	cdc.RegisterConcrete(types.MsgUnfreezeToken{}, "issuer/MsgUnfreezeToken", nil)
+	cdc.RegisterConcrete(types.MsgWithdrawToken{}, "issuer/MsgWithdrawToken", nil)
 }
 
 // ModuleCdc defines the module codec

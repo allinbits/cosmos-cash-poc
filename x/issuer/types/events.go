@@ -7,6 +7,7 @@ const (
 	EventTypeBurnToken     = "burn-token"
 	EventTypeFreezeToken   = "freeze-token"
 	EventTypeUnfreezeToken = "unfreeze-token"
+	EventTypeWithdrawToken = "withdraw-token"
 
 	AttributeKeyIssuerAddress = "issuer-address"
 	AttributeKeyIssuerAmount  = "issuer-amount"
