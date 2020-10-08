@@ -45,7 +45,8 @@ var (
 	)
 
 	maccPerms = map[string][]string{
-		auth.FeeCollectorName: nil,
+		auth.FeeCollectorName:  nil,
+		issuertypes.ModuleName: nil,
 	}
 )
 
@@ -145,8 +146,10 @@ func NewInitApp(
 		keys[poatypes.StoreKey],
 		app.subspaces[poatypes.ModuleName],
 	)
+
 	app.issuerKeeper = issuerkeeper.NewKeeper(
 		app.bankKeeper,
+		app.supplyKeeper,
 		app.cdc,
 		keys[issuertypes.StoreKey],
 	)

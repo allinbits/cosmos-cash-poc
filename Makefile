@@ -128,10 +128,13 @@ send-token-back:
 	poacli tx send $(shell go run cmd/poacli/main.go keys show validator -a) $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) 50000000cashmoney --from euro-token-issuer -y --trust-node --chain-id cash
 
 mint-token: 
-	go run cmd/poacli/main.go tx issuer mint-token cashmoney 100000000000 --trust-node --from euro-token-issuer --chain-id cash
+	go run cmd/poacli/main.go tx issuer mint-token cashmoney 50000000 --trust-node --from euro-token-issuer --chain-id cash
 
 burn-token: 
-	go run cmd/poacli/main.go tx issuer burn-token cashmoney 100000000000 --trust-node --from euro-token-issuer --chain-id cash
+	go run cmd/poacli/main.go tx issuer burn-token cashmoney 50000000 --trust-node --from euro-token-issuer --chain-id cash
+
+withdraw-token: 
+	go run cmd/poacli/main.go tx issuer withdraw-token cashmoney 50000000 --trust-node --from euro-token-issuer --chain-id cash
 
 freeze-token: 
 	go run cmd/poacli/main.go tx issuer freeze-token cashmoney --trust-node --from euro-token-issuer --chain-id cash
