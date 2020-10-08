@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+	"github.com/cosmos/cosmos-sdk/x/supply"
 )
 
 // UnmarshalFn is a generic function to unmarshal bytes
@@ -16,19 +17,24 @@ type UnmarshalFn func(value []byte) (interface{}, bool)
 
 // Keeper of the issuer store
 type Keeper struct {
-	CoinKeeper bank.Keeper
-	storeKey   sdk.StoreKey
-	cdc        *codec.Codec
-	// paramspace types.ParamSubspace
+	CoinKeeper   bank.Keeper
+	SupplyKeeper supply.Keeper
+	storeKey     sdk.StoreKey
+	cdc          *codec.Codec
+	//permAddrs    map[string]types.PermissionsForAddress
 }
 
 // NewKeeper creates a issuer keeper
-func NewKeeper(coinKeeper bank.Keeper, cdc *codec.Codec, key sdk.StoreKey) Keeper {
+func NewKeeper(coinKeeper bank.Keeper, supplyKeeper supply.Keeper, cdc *codec.Codec, key sdk.StoreKey) Keeper {
+	if addr := supplyKeeper.GetModuleAddress(types.ModuleName); addr == nil {
+		panic(fmt.Sprintf("%s module account has not been set", types.ModuleName))
+	}
+
 	keeper := Keeper{
-		CoinKeeper: coinKeeper,
-		storeKey:   key,
-		cdc:        cdc,
-		// paramspace: paramspace.WithKeyTable(types.ParamKeyTable()),
+		CoinKeeper:   coinKeeper,
+		SupplyKeeper: supplyKeeper,
+		storeKey:     key,
+		cdc:          cdc,
 	}
 	return keeper
 }

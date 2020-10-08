@@ -32,6 +32,7 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 		GetCmdBurnToken(cdc),
 		GetCmdFreezeToken(cdc),
 		GetCmdUnfreezeToken(cdc),
+		GetCmdWithdrawToken(cdc),
 	)...)
 
 	return issuerTxCmd
@@ -102,7 +103,7 @@ func GetCmdMintToken(cdc *codec.Codec) *cobra.Command {
 func GetCmdBurnToken(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "burn-token [token] [amount]",
-		Short: "burn tokens",
+		Short: "burn token",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -172,6 +173,34 @@ func GetCmdUnfreezeToken(cdc *codec.Codec) *cobra.Command {
 			accAddr := cliCtx.GetFromAddress()
 
 			msg := types.NewMsgUnfreezeToken(args[0], accAddr)
+			err := msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+// GetCmdWithdrawToken is the CLI command for sending a WithdrawToken transaction
+func GetCmdWithdrawToken(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "withdraw-token [token] [amount]",
+		Short: "withdraw token",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			// if err := cliCtx.EnsureAccountExists(); err != nil {
+			// 	return err
+			// }
+
+			accAddr := cliCtx.GetFromAddress()
+
+			msg := types.NewMsgWithdrawToken(args[0], args[1], accAddr)
 			err := msg.ValidateBasic()
 			if err != nil {
 				return err

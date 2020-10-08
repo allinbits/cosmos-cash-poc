@@ -25,6 +25,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			return handleMsgFreezeToken(ctx, msg, k)
 		case types.MsgUnfreezeToken:
 			return handleMsgUnfreezeToken(ctx, msg, k)
+		case types.MsgWithdrawToken:
+			return handleMsgWithdrawToken(ctx, msg, k)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -152,6 +154,26 @@ func handleMsgUnfreezeToken(ctx sdk.Context, msg types.MsgUnfreezeToken, k keepe
 		sdk.NewEvent(
 			types.EventTypeUnfreezeToken,
 			sdk.NewAttribute(types.AttributeKeyIssuerAddress, msg.Issuer.String()),
+		),
+	})
+
+	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
+}
+
+func handleMsgWithdrawToken(ctx sdk.Context, msg types.MsgWithdrawToken, k keeper.Keeper) (*sdk.Result, error) {
+	// TODO: have some check here
+
+	amount, err := strconv.Atoi(msg.Amount)
+	if err != nil {
+		return nil, nil
+	}
+
+	k.SupplyKeeper.SendCoinsFromAccountToModule(ctx, msg.Owner, types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin(msg.Token, int64(amount))))
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeWithdrawToken,
+			sdk.NewAttribute(types.AttributeKeyIssuerAddress, msg.Owner.String()),
 		),
 	})
 
