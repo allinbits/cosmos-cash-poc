@@ -1,4 +1,8 @@
-# poa
+# authchain UI
+
+This is the [vuejs](https://vuejs.org/) user inteface to authchain.
+
+It provides UI components including login, and a template for you to do additonal development.
 
 ## Project setup
 

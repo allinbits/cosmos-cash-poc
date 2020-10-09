@@ -1,7 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Index from "../views/Index.vue";
-import Poa from "../views/Poa.vue";
 import Issuer from "../views/Issuer.vue";
 
 Vue.use(VueRouter);
@@ -12,11 +11,7 @@ const routes = [
     component: Index,
   },
   {
-    path: "/poa",
-    component: Poa,
-  },
-  {
-    path: "/issuer",
+    path: "/issuers",
     component: Issuer,
   },
 ];

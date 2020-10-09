@@ -51,7 +51,7 @@ func GetCmdIssuersAll(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			var issuers []types.Issuer
 			for _, kv := range resKVs {
 				issuer := types.Issuer{}
-				cdc.UnmarshalBinaryLengthPrefixed(kv.Value, &issuer)
+				cdc.UnmarshalBinaryBare(kv.Value, &issuer)
 				issuers = append(issuers, issuer)
 
 			}
