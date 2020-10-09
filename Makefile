@@ -121,6 +121,9 @@ create-issuer-key:
 create-issuer: create-issuer-key
 	go run cmd/poacli/main.go tx issuer create-issuer euro-token-issuer $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) cashmoney 100000000000 --trust-node --from validator --chain-id cash --home ./build/.poad
 
+query-all-issuers:
+	go run cmd/poacli/main.go query issuer issuers --home ./build/.poad
+
 send-token:
 	poacli tx send $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) $(shell go run cmd/poacli/main.go keys show validator -a) 50000000cashmoney --from euro-token-issuer -y --trust-node --chain-id cash
 

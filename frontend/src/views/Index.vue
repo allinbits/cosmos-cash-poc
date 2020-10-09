@@ -1,8 +1,0 @@
-<template>
-  <div>
-    <app-layout>
-      <wallet />
-      <!-- <validator-list -->
-    </app-layout>
-  </div>
-</template>
