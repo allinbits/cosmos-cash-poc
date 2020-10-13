@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-tabs class="sp-container" md-sync-route>
+    <md-tabs class="sp-container md-elevation-5" md-sync-route>
       <md-tab
         id="tab-home"
         md-label="Home"
@@ -14,12 +14,12 @@
         md-icon="supervisor_account"
         to="/issuers"
       ></md-tab>
-      <!--      <md-tab
+      <md-tab
         id="tab-poa"
         md-icon="vpn_lock"
-        md-label="validators"
-        to="/poa"
-	></md-tab> -->
+        md-label="admin"
+        to="/admin"
+      ></md-tab>
     </md-tabs>
     <router-view />
   </div>
@@ -27,9 +27,9 @@
 
 <style>
 .sp-container {
-  margin: 0 auto;
+  margin-top: 1rem;
+  margin-bottom: 50px;
   max-width: 1200px;
-  padding: 1rem;
 }
 </style>
 

@@ -1,10 +1,11 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import { coins } from "@cosmjs/launchpad";
+
 import cosmos from "@tendermint/vue/src/store/cosmos.js";
 
-
-const VUE_APP_API_COSMOS="http://127.0.0.1:1317"
+const VUE_APP_API_COSMOS = "http://127.0.0.1:1317";
 
 Vue.use(Vuex);
 export default new Vuex.Store({
@@ -25,7 +26,7 @@ export default new Vuex.Store({
     clientUpdate(state, { client }) {
       state.client = client;
     },
-	  validatorsUpdate(state, validators) {
+    validatorsUpdate(state, validators) {
       state.validators = validators;
     },
     poaValidatorsUpdate(state, poaValidators) {
@@ -42,29 +43,24 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async entityFetch({ state, commit }, { type }) {
-      const { chain_id } = state;
-      const url = `${VUE_APP_API_COSMOS}/${chain_id}/${type}`;
-      const body = (await axios.get(url)).data.result;
-      commit("entitySet", { type, body });
-    },
-    async accountUpdate({ state, commit }) {
-      const url = `${VUE_APP_API_COSMOS}/auth/accounts/${state.client.senderAddress}`;
-      const acc = (await axios.get(url)).data;
-      const account = acc.result.value;
-      commit("accountUpdate", { account });
-    },
     async entitySubmit({ state }, { type, body }) {
-      const { chain_id } = state;
-      const creator = state.client.senderAddress;
-      const base_req = { chain_id, from: creator };
-      const req = { base_req, creator, ...body };
-      const { data } = await axios.post(
-        `${VUE_APP_API_COSMOS}/${chain_id}/${type}`,
-        req
-      );
-      const { msg, fee, memo } = data.value;
-      return await state.client.signAndPost(msg, fee, memo);
+      const { chain_id } = state.cosmos;
+      const creator = state.cosmos.client.senderAddress;
+      const memo = "admin action";
+      const msg = {
+        type: type,
+        value: {
+          amount: body.amount,
+          token: body.token,
+          issuer: creator,
+        },
+      };
+      const fee = {
+        amount: coins(200, body.token),
+        gas: "200000",
+      };
+
+      return await state.cosmos.client.signAndPost([msg], fee, memo);
     },
     async getValidators({ state, commit }, { type, body }) {
       const { data } = await axios.get(`${TENDERMINT}/validators`);
@@ -86,8 +82,8 @@ export default new Vuex.Store({
       const { data } = await axios.get(
         `${VUE_APP_API_COSMOS}/bank/balances/${address}`
       );
-	
-       state.tokens[address] = data.result
+
+      state.tokens[address] = data.result;
       commit("tokensUpdate", state.tokens);
     },
   },
