@@ -65,7 +65,7 @@
 <script>
 export default {
   async created() {
-    this.$store.dispatch("getIssuers", { val: "val" });
+    this.$store.dispatch("getIssuers");
   },
   computed: {
     issuers() {
@@ -77,7 +77,7 @@ export default {
   },
   methods: {
     async getIssuers() {
-      this.$store.dispatch("getIssuers", { val: "val" });
+      this.$store.dispatch("getIssuers");
     },
     async getTokens(address) {
       this.$store.dispatch("getTokens", { address });

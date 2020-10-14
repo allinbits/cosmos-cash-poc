@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="sp-container">
-      <sp-sign-in />
       <issuer-list class="top_spacing" />
       <!-- this line is used by starport scaffolding # 4 -->
     </div>
