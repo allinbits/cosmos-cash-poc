@@ -43,20 +43,12 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async entitySubmit({ state }, { type, body }) {
+    async entitySubmit({ state }, msg) {
       const { chain_id } = state.cosmos;
       const creator = state.cosmos.client.senderAddress;
       const memo = "admin action";
-      const msg = {
-        type: type,
-        value: {
-          amount: body.amount,
-          token: body.token,
-          issuer: creator,
-        },
-      };
       const fee = {
-        amount: coins(200, body.token),
+        amount: coins(200, msg.value.token),
         gas: "200000",
       };
 
@@ -76,6 +68,9 @@ export default new Vuex.Store({
     },
     async getIssuers({ state, commit }) {
       const { data } = await axios.get(`${VUE_APP_API_COSMOS}/issuer/issuers`);
+      data.result.map(async (issuer) => {
+        await this.dispatch("getTokens", { address: issuer.address });
+      });
       commit("issuersUpdate", data.result);
     },
     async getTokens({ state, commit }, { address }) {

@@ -8,9 +8,11 @@ import "vue-material/dist/vue-material.min.css";
 import "vue-material/dist/theme/default.css";
 
 import IssuerList from "./components/IssuerList.vue";
+import TokenAction from "./components/TokenAction.vue";
 
 Vue.use(VueMaterial);
 Vue.component("issuer-list", IssuerList);
+Vue.component("token-action", TokenAction);
 
 Vue.config.productionTip = false;
 

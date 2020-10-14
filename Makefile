@@ -115,35 +115,41 @@ query-all-votes:
 
 ### issuer module commands
 
+create-custom-issuer-key:
+	echo "y" | go run cmd/poacli/main.go keys add $$CUSTOM_TOKEN-issuer
+
+create-custom-issuer: create-custom-issuer-key
+	go run cmd/poacli/main.go tx issuer create-issuer $$CUSTOM_TOKEN-issuer $(shell go run cmd/poacli/main.go keys show $$CUSTOM_TOKEN-issuer -a) $$CUSTOM_TOKEN 100000000000 --trust-node --from validator --chain-id cash --home ./build/.poad
+
 create-issuer-key:
 	echo "y" | go run cmd/poacli/main.go keys add euro-token-issuer
 
 create-issuer: create-issuer-key
-	go run cmd/poacli/main.go tx issuer create-issuer euro-token-issuer $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) cashmoney 100000000000 --trust-node --from validator --chain-id cash --home ./build/.poad
+	go run cmd/poacli/main.go tx issuer create-issuer euro-token-issuer $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) eurotoken 100000000000 --trust-node --from validator --chain-id cash --home ./build/.poad
 
 query-all-issuers:
 	go run cmd/poacli/main.go query issuer issuers --home ./build/.poad
 
 send-token:
-	poacli tx send $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) $(shell go run cmd/poacli/main.go keys show validator -a) 50000000cashmoney --from euro-token-issuer -y --trust-node --chain-id cash
+	poacli tx send $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) $(shell go run cmd/poacli/main.go keys show validator -a) 50000000eurotoken --from euro-token-issuer -y --trust-node --chain-id cash
 
 send-token-back:
-	poacli tx send $(shell go run cmd/poacli/main.go keys show validator -a) $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) 50000000cashmoney --from euro-token-issuer -y --trust-node --chain-id cash
+	poacli tx send $(shell go run cmd/poacli/main.go keys show validator -a) $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) 50000000eurotoken --from euro-token-issuer -y --trust-node --chain-id cash
 
 mint-token: 
-	go run cmd/poacli/main.go tx issuer mint-token cashmoney 50000000 --trust-node --from euro-token-issuer --chain-id cash
+	go run cmd/poacli/main.go tx issuer mint-token eurotoken 50000000 --trust-node --from euro-token-issuer --chain-id cash
 
 burn-token: 
-	go run cmd/poacli/main.go tx issuer burn-token cashmoney 50000000 --trust-node --from euro-token-issuer --chain-id cash
+	go run cmd/poacli/main.go tx issuer burn-token eurotoken 50000000 --trust-node --from euro-token-issuer --chain-id cash
 
 withdraw-token: 
-	go run cmd/poacli/main.go tx issuer withdraw-token cashmoney 50000000 --trust-node --from euro-token-issuer --chain-id cash
+	go run cmd/poacli/main.go tx issuer withdraw-token eurotoken 50000000 --trust-node --from euro-token-issuer --chain-id cash
 
 freeze-token: 
-	go run cmd/poacli/main.go tx issuer freeze-token cashmoney --trust-node --from euro-token-issuer --chain-id cash
+	go run cmd/poacli/main.go tx issuer freeze-token eurotoken --trust-node --from euro-token-issuer --chain-id cash
 
 unfreeze-token: 
-	go run cmd/poacli/main.go tx issuer unfreeze-token cashmoney --trust-node --from euro-token-issuer --chain-id cash
+	go run cmd/poacli/main.go tx issuer unfreeze-token eurotoken --trust-node --from euro-token-issuer --chain-id cash
 
 query-balance: 
 	go run cmd/poacli/main.go query account $(shell go run cmd/poacli/main.go keys show validator -a)
