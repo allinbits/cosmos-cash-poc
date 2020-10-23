@@ -70,6 +70,9 @@ build-linux:
 ###                           Tests & Simulation                            ###
 ###############################################################################
 
+test-bdd:
+	cd ./test/e2e/issuers && godog
+	
 localnet-distribute-tokens:
 	./scripts/create-and-distribute-tokens.sh
 
