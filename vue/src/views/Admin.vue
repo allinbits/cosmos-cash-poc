@@ -13,12 +13,17 @@
         <token-action type="Burn" />
         <token-action type="Mint" />
         <div v-model="issuer">
+        <div v-if="issuer">
           <div v-if="issuer.state === 'accepted'">
             <token-action type="Freeze" />
           </div>
           <div v-if="issuer.state === 'frozen'">
             <token-action type="Unfreeze" />
           </div>
+        </div>
+        <div v-else>
+            <user-action type="Withdraw" />
+        </div>
         </div>
       </md-card>
     </div>
