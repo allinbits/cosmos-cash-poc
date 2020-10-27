@@ -67,7 +67,7 @@ sendTokens() {
 echo "Creating issuer for eurotoken\n"
 createIssuer $EURO_ISSUER_NAME $EURO_NAME poadnode1 poadnode0 
 
-echo "Creating issuer for cdbc\n"
+echo "Creating issuer for cbdc\n"
 createIssuer $CBDC_ISSUER_NAME $CBDC_NAME poadnode1 poadnode0 
 
 echo "Creating issuer for token\n"
@@ -80,15 +80,17 @@ createIssuer $TOKEN_ISSUER_NAME $TOKEN_NAME poadnode1 poadnode0
 # Mint, Burn and transfer tokens
 
 # Mint euro  
+echo "Minting euro tokens\n"
 mintTokens $EURO_ISSUER_NAME $EURO_NAME poadnode1
 
-# echo "Issuer should have 200000000000 eurotoken's\n"
+echo "Issuer should have 200000000000 eurotoken's\n"
 queryAccount $EURO_ISSUER_NAME poadnode1
 
 # Burn euro
+echo "Burning euro tokens\n"
 burnTokens $EURO_ISSUER_NAME $EURO_NAME poadnode1
 
-# echo "Issuer should have 100000000000 eurotoken's\n"
+echo "Issuer should have 100000000000 eurotoken's\n"
 queryAccount $EURO_ISSUER_NAME poadnode1
 
 # Transfer tokens between issuers  
@@ -101,3 +103,8 @@ sendTokens $CBDC_ISSUER_NAME $CBDC_NAME $TOKEN_ISSUER_NAME poadnode1 poadnode1
 sendTokens $TOKEN_ISSUER_NAME $TOKEN_NAME $CBDC_ISSUER_NAME poadnode1 poadnode1
 sendTokens $EURO_ISSUER_NAME $EURO_NAME $CBDC_ISSUER_NAME poadnode1 poadnode1
 
+echo "Creating user for cosmos cash\n"
+docker exec -e USER_NAME=user poadnode1 /bin/sh -c 'poacli keys add $(echo $USER_NAME) --keyring-backend test'
+
+echo "Sending euro tokens to user\n"
+sendTokens $EURO_ISSUER_NAME $EURO_NAME user poadnode1 poadnode1

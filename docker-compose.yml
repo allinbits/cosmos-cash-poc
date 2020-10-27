@@ -14,7 +14,7 @@ services:
     volumes:
       - ./build/.poad:/root/.poad
       - ./build/validator:/root/validator
-    command: ["sh", "-c", "dlv --listen=:40000 --headless --accept-multiclient exec --continue ./poad -- start --home /root/.poad"]
+    command: ["sh", "-c", "(poacli rest-server --laddr tcp://0.0.0.0:1317 --chain-id cash --trust-node --unsafe-cors --home /root/.poad &) ; dlv --listen=:40000 --headless --accept-multiclient exec --continue ./poad -- start --home /root/.poad"]
     networks:
       localnet:
         ipv4_address: 192.16.10.2

@@ -18,10 +18,16 @@
               to="/issuers"
             ></md-tab>
             <md-tab
-              id="tab-poa"
-              md-icon="vpn_lock"
+              id="tab-admin"
+              md-icon="admin_panel_settings"
               md-label="admin"
               to="/admin"
+            ></md-tab>
+            <md-tab
+              id="tab-poa"
+              md-icon="vpn_lock"
+              md-label="validators"
+              to="/validators"
             ></md-tab>
           </div>
         </md-tabs>
