@@ -2,17 +2,22 @@
 
 ## Abstract
 
-<!-- TODO: Create a abstract definition of what this module does, what functionality does it enable and how it can be used. -->
+This paper specifies a `issuer` module of the Cosmos-SDK. The `issuer` module will define 
+
+The `issuer` module will have the following characteristics:
+
+- Issuers can be created by admins in the system
+- Issuers can mint tokens 
+- Issuers can burn tokens 
+- Issuers can freeze accounts and freeze token transfers 
+
+One main data structure is used to allow the `issuer` module to function correctly:
+
+- `Issuer`: Issuer represents an actor in the system that can manage tokens
 
 ## Contents
 
-// TODO: Create the below files if they are needed.
-
-1. **[Concepts](01_concepts.md)**
-2. **[State](02_state.md)**
+1. **[State](01_state.md)**
+1. **[State Transitions](02_state_transitions.md)**
 3. **[Messages](03_messages.md)**
-4. **[Begin-Block](04_begin_block.md)**
-5. **[End-Block](05_end_block.md)**
-6. **[Hooks](06_hooks.md)**
-7. **[Events](07_events.md)**
-8. **[Parameters](08_params.md)**
+7. **[Events](04_events.md)**
