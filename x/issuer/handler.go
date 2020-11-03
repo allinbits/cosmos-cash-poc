@@ -27,6 +27,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			return handleMsgUnfreezeToken(ctx, msg, k)
 		case types.MsgWithdrawToken:
 			return handleMsgWithdrawToken(ctx, msg, k)
+		case types.MsgFreezeAccount:
+			return handleMsgFreezeAccount(ctx, msg, k)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -174,6 +176,24 @@ func handleMsgWithdrawToken(ctx sdk.Context, msg types.MsgWithdrawToken, k keepe
 		sdk.NewEvent(
 			types.EventTypeWithdrawToken,
 			sdk.NewAttribute(types.AttributeKeyIssuerAddress, msg.Owner.String()),
+		),
+	})
+
+	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
+}
+
+func handleMsgFreezeAccount(ctx sdk.Context, msg types.MsgFreezeAccount, k keeper.Keeper) (*sdk.Result, error) {
+	account := types.NewAccount(
+		msg.Account,
+		types.FROZENACCOUNT,
+	)
+
+	k.SetAccount(ctx, msg.Account, account)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeWithdrawToken,
+			sdk.NewAttribute(types.AttributeKeyIssuerAddress, msg.Issuer.String()),
 		),
 	})
 
