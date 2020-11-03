@@ -33,6 +33,7 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 		GetCmdFreezeToken(cdc),
 		GetCmdUnfreezeToken(cdc),
 		GetCmdWithdrawToken(cdc),
+		GetCmdFreezeAccount(cdc),
 	)...)
 
 	return issuerTxCmd
@@ -202,6 +203,34 @@ func GetCmdWithdrawToken(cdc *codec.Codec) *cobra.Command {
 
 			msg := types.NewMsgWithdrawToken(args[0], args[1], accAddr)
 			err := msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+// GetCmdUnfreezeToken is the CLI command for sending a UnfreezeToken transaction
+func GetCmdFreezeAccount(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "freeze-account [account]",
+		Short: "freeze account",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			freezeAccAddr, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
+
+			accAddr := cliCtx.GetFromAddress()
+
+			msg := types.NewMsgFreezeAccount(freezeAccAddr, accAddr)
+			err = msg.ValidateBasic()
 			if err != nil {
 				return err
 			}

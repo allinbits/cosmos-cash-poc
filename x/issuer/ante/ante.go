@@ -1,7 +1,9 @@
 package ante
 
 import (
+	"fmt"
 	"github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
+	"github.com/allinbits/cosmos-cash-poa/x/issuer/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank"
 )
@@ -31,6 +33,21 @@ func (difd DeductIssuerFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 			issuer, found := difd.ik.GetIssuerByToken(ctx, sendMsg.Amount[0].Denom)
 
 			if found {
+				account, found := difd.ik.GetAccount(ctx, sendMsg.FromAddress)
+				if found {
+
+					if account.State == types.FROZENACCOUNT {
+						return ctx, fmt.Errorf("account is frozen")
+					}
+				}
+
+				account, found = difd.ik.GetAccount(ctx, sendMsg.ToAddress)
+				if found {
+					if account.State == types.FROZENACCOUNT {
+						return ctx, fmt.Errorf("account is frozen")
+					}
+				}
+
 				difd.ik.CoinKeeper.SendCoins(ctx, sendMsg.FromAddress, issuer.Address, sdk.NewCoins(sdk.NewInt64Coin(issuer.Token, int64(issuer.Fee))))
 			}
 		}

@@ -8,6 +8,7 @@ const (
 	EventTypeFreezeToken   = "freeze-token"
 	EventTypeUnfreezeToken = "unfreeze-token"
 	EventTypeWithdrawToken = "withdraw-token"
+	EventTypeFreezeAccount = "freeze-account"
 
 	AttributeKeyIssuerAddress = "issuer-address"
 	AttributeKeyIssuerAmount  = "issuer-amount"

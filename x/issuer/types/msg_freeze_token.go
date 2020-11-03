@@ -22,7 +22,7 @@ func NewMsgFreezeToken(token string, issuer sdk.AccAddress) MsgFreezeToken {
 func (msg MsgFreezeToken) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgFreezeToken) Type() string { return "burn_token" }
+func (msg MsgFreezeToken) Type() string { return "freeze_token" }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgFreezeToken) ValidateBasic() error {

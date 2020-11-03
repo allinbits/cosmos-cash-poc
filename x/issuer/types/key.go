@@ -1,8 +1,9 @@
 package types
 
 var (
-	IssuersKey = []byte{0x51} // prefix for each key to a Issuer
-	TokensKey  = []byte{0x53} // prefix for each key to a Token
+	IssuersKey  = []byte{0x51} // prefix for each key to a Issuer
+	TokensKey   = []byte{0x52} // prefix for each key to a Token
+	AccountsKey = []byte{0x53} // prefix for each key to a Issuer
 )
 
 const (

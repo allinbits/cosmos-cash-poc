@@ -157,6 +157,9 @@ unfreeze-token:
 query-balance: 
 	go run cmd/poacli/main.go query account $(shell go run cmd/poacli/main.go keys show validator -a)
 
+freeze-account: 
+	go run cmd/poacli/main.go tx issuer freeze-account $(shell go run cmd/poacli/main.go keys show validator -a) --trust-node --from euro-token-issuer --chain-id cash
+
 .PHONY:					\
 	test				\
 	lint				\
