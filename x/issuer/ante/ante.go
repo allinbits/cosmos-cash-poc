@@ -31,11 +31,13 @@ func (difd DeductIssuerFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 		if msg.Type() == "send" {
 			sendMsg := msg.(bank.MsgSend)
 			issuer, found := difd.ik.GetIssuerByToken(ctx, sendMsg.Amount[0].Denom)
+			if issuer.State == types.FROZEN {
+				return ctx, fmt.Errorf("token is frozen")
+			}
 
 			if found {
 				account, found := difd.ik.GetAccount(ctx, sendMsg.FromAddress)
 				if found {
-
 					if account.State == types.FROZENACCOUNT {
 						return ctx, fmt.Errorf("account is frozen")
 					}

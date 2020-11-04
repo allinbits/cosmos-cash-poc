@@ -130,7 +130,6 @@ func handleMsgFreezeToken(ctx sdk.Context, msg types.MsgFreezeToken, k keeper.Ke
 
 	issuer.State = types.FROZEN
 	k.SetIssuer(ctx, msg.Issuer, issuer)
-	k.CoinKeeper.SetSendEnabled(ctx, false)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -150,7 +149,6 @@ func handleMsgUnfreezeToken(ctx sdk.Context, msg types.MsgUnfreezeToken, k keepe
 
 	issuer.State = types.ACCEPTED
 	k.SetIssuer(ctx, msg.Issuer, issuer)
-	k.CoinKeeper.SetSendEnabled(ctx, true)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
