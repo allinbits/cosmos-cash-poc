@@ -1,18 +1,21 @@
 package cli
 
 import (
+	"bufio"
 	"fmt"
 
 	"github.com/spf13/cobra"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	_ "github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
-	_ "github.com/cosmos/cosmos-sdk/types"
-	_ "github.com/cosmos/cosmos-sdk/x/auth"
-	_ "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/allinbits/cosmos-cash-poa/x/did/types"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/crypto/keys"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	"github.com/spf13/viper"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -26,35 +29,47 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	}
 
 	didTxCmd.AddCommand(flags.PostCommands(
-		// this line is used by starport scaffolding # 1
-		// TODO: Add tx based commands
-		// GetCmd<Action>(cdc)
+		GetCmdCreateDidDocument(cdc),
 	)...)
 
 	return didTxCmd
 }
 
-// Example:
-/*
-// GetCmd<Action> is the CLI command for doing <Action>
-func GetCmd<Action>(cdc *codec.Codec) *cobra.Command {
- 	return &cobra.Command{
- 		Use:   "Describe your action cmd",
- 		Short: "Provide a short description on the cmd",
- 		Args:  cobra.ExactArgs(2), // Does your request require arguments
- 		RunE: func(cmd *cobra.Command, args []string) error {
- 			cliCtx := context.NewCLIContext().WithCodec(cdc)
- 			inBuf := bufio.NewReader(cmd.InOrStdin())
- 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+// GetCmdCreateDidDocument is the CLI command for sending a CreateDidDocument transaction
+func GetCmdCreateDidDocument(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "create-did-document",
+		Short: "create an did document for an address",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
- 			msg := types.NewMsg<Action>(Action params)
- 			err = msg.ValidateBasic()
- 			if err != nil {
- 				return err
- 			}
+			// if err := cliCtx.EnsureAccountExists(); err != nil {
+			// 	return err
+			// }
 
- 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
- 		},
+			accAddr := cliCtx.GetFromAddress()
+			id := types.DidIdentifer + accAddr.String()
+			fmt.Println(id)
+			keybase, err := keys.NewKeyring(sdk.KeyringServiceName(),
+				viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), inBuf)
+			info, err := keybase.GetByAddress(accAddr)
+			if err != nil {
+				return err
+			}
+			pubKeyBase58 := info.GetPubKey().Address()
+			pubKey := types.NewPubKey(types.Context, id, accAddr, pubKeyBase58.String())
+			authentication := types.PubKeys{pubKey}
+
+			msg := types.NewMsgCreateDidDocument(types.Context, id, authentication, nil, accAddr)
+			err = msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
 	}
 }
-*/

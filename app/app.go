@@ -10,12 +10,17 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/allinbits/cosmos-cash-poa/x/did"
+	didkeeper "github.com/allinbits/cosmos-cash-poa/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash-poa/x/did/types"
 	"github.com/allinbits/cosmos-cash-poa/x/issuer"
 	issuerkeeper "github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
 	issuertypes "github.com/allinbits/cosmos-cash-poa/x/issuer/types"
+
 	"github.com/allinbits/modules/poa"
 	poakeeper "github.com/allinbits/modules/poa/keeper"
 	poatypes "github.com/allinbits/modules/poa/types"
+
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -42,6 +47,7 @@ var (
 		supply.AppModuleBasic{},
 		poa.AppModuleBasic{},
 		issuer.AppModuleBasic{},
+		did.AppModuleBasic{},
 	)
 
 	maccPerms = map[string][]string{
@@ -77,6 +83,7 @@ type NewApp struct {
 	paramsKeeper  params.Keeper
 	poaKeeper     poakeeper.Keeper
 	issuerKeeper  issuerkeeper.Keeper
+	didKeeper     didkeeper.Keeper
 	mm            *module.Manager
 
 	sm *module.SimulationManager
@@ -101,6 +108,7 @@ func NewInitApp(
 		params.StoreKey,
 		poatypes.StoreKey,
 		issuertypes.StoreKey,
+		didtypes.StoreKey,
 	)
 
 	tKeys := sdk.NewTransientStoreKeys(params.TStoreKey)
@@ -154,6 +162,11 @@ func NewInitApp(
 		keys[issuertypes.StoreKey],
 	)
 
+	app.didKeeper = didkeeper.NewKeeper(
+		app.cdc,
+		keys[issuertypes.StoreKey],
+	)
+
 	app.mm = module.NewManager(
 		genutil.NewAppModule(app.accountKeeper, app.poaKeeper, app.BaseApp.DeliverTx),
 		auth.NewAppModule(app.accountKeeper),
@@ -161,6 +174,7 @@ func NewInitApp(
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		poa.NewAppModule(app.poaKeeper, app.bankKeeper),
 		issuer.NewAppModule(app.issuerKeeper, app.bankKeeper),
+		did.NewAppModule(app.didKeeper),
 	)
 
 	app.mm.SetOrderEndBlockers(poatypes.ModuleName)

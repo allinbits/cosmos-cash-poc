@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -25,12 +26,35 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 	didQueryCmd.AddCommand(
 		flags.GetCommands(
-	// this line is used by starport scaffolding # 1
-	// TODO: Add query Cmds
+			GetCmdDidDocumentAll(queryRoute, cdc),
 		)...,
 	)
 
 	return didQueryCmd
 }
 
-// TODO: Add Query Commands
+func GetCmdDidDocumentAll(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "did-documents",
+		Short: "did-documents",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			resKVs, _, err := cliCtx.QuerySubspace(types.DidDocumentKey, "did")
+			if err != nil {
+				return err
+			}
+
+			var diddocuments []types.DidDocument
+			for _, kv := range resKVs {
+				doc := types.DidDocument{}
+				cdc.UnmarshalBinaryBare(kv.Value, &doc)
+				diddocuments = append(diddocuments, doc)
+
+			}
+
+			return cliCtx.PrintOutput(diddocuments)
+		},
+	}
+}

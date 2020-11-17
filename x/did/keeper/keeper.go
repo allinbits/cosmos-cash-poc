@@ -5,24 +5,26 @@ import (
 
 	"github.com/tendermint/tendermint/libs/log"
 
+	"github.com/allinbits/cosmos-cash-poa/x/issuer/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/allinbits/cosmos-cash-poa/x/did/types"
 )
 
-// Keeper of the did store
+// UnmarshalFn is a generic function to unmarshal bytes
+type UnmarshalFn func(value []byte) (interface{}, bool)
+
+// Keeper of the issuer store
 type Keeper struct {
-	storeKey   sdk.StoreKey
-	cdc        *codec.Codec
-	paramspace types.ParamSubspace
+	storeKey sdk.StoreKey
+	cdc      *codec.Codec
+	//permAddrs    map[string]types.PermissionsForAddress
 }
 
-// NewKeeper creates a did keeper
-func NewKeeper(cdc *codec.Codec, key sdk.StoreKey, paramspace types.ParamSubspace) Keeper {
+// NewKeeper creates a issuer keeper
+func NewKeeper(cdc *codec.Codec, key sdk.StoreKey) Keeper {
 	keeper := Keeper{
-		storeKey:   key,
-		cdc:        cdc,
-		paramspace: paramspace.WithKeyTable(types.ParamKeyTable()),
+		storeKey: key,
+		cdc:      cdc,
 	}
 	return keeper
 }
@@ -32,25 +34,29 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-// Get returns the pubkey from the adddress-pubkey relation
-func (k Keeper) Get(ctx sdk.Context, key string) (interface{} /* TODO: Fill out this type */, error) {
+// Set sets a value in the db with a prefixed key
+func (k Keeper) Set(ctx sdk.Context, key []byte, prefix []byte, i interface{}) {
 	store := ctx.KVStore(k.storeKey)
-	var item interface{} /* TODO: Fill out this type */
-	byteKey := []byte(key)
-	err := k.cdc.UnmarshalBinaryLengthPrefixed(store.Get(byteKey), &item)
-	if err != nil {
-		return nil, err
+	store.Set(append(prefix, key...), k.cdc.MustMarshalBinaryBare(i))
+}
+
+// Get gets an item from the store by bytes
+func (k Keeper) Get(ctx sdk.Context, key []byte, prefix []byte, unmarshal UnmarshalFn) (i interface{}, found bool) {
+	store := ctx.KVStore(k.storeKey)
+	value := store.Get(append(prefix, key...))
+
+	return unmarshal(value)
+}
+
+// GetAll values from with a prefix from the store
+func (k Keeper) GetAll(ctx sdk.Context, prefix []byte, unmarshal UnmarshalFn) (i []interface{}) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		value, _ := unmarshal(iterator.Value())
+		i = append(i, value)
 	}
-	return item, nil
-}
-
-func (k Keeper) set(ctx sdk.Context, key string, value interface{} /* TODO: fill out this type */ ) {
-	store := ctx.KVStore(k.storeKey)
-	bz := k.cdc.MustMarshalBinaryLengthPrefixed(value)
-	store.Set([]byte(key), bz)
-}
-
-func (k Keeper) delete(ctx sdk.Context, key string) {
-	store := ctx.KVStore(k.storeKey)
-	store.Delete([]byte(key))
+	return i
 }

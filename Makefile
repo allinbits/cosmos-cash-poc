@@ -160,6 +160,14 @@ query-balance:
 freeze-account: 
 	go run cmd/poacli/main.go tx issuer freeze-account $(shell go run cmd/poacli/main.go keys show validator -a) --trust-node --from euro-token-issuer --chain-id cash
 
+### did module commands
+
+create-did-document:
+	go run cmd/poacli/main.go tx did create-did-document --trust-node --from validator  --chain-id cash
+
+query-all-did-documents:
+	go run cmd/poacli/main.go query did did-documents --home ./build/.poad
+
 .PHONY:					\
 	test				\
 	lint				\
