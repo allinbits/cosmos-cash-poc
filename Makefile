@@ -166,7 +166,7 @@ create-did-document:
 	go run cmd/poacli/main.go tx did create-did-document --trust-node --from validator  --chain-id cash
 
 query-all-did-documents:
-	go run cmd/poacli/main.go query did did-documents --home ./build/.poad
+	go run cmd/poacli/main.go query did did-documents --home ./build/.poad --output json | jq
 
 .PHONY:					\
 	test				\
