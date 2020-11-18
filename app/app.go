@@ -164,7 +164,7 @@ func NewInitApp(
 
 	app.didKeeper = didkeeper.NewKeeper(
 		app.cdc,
-		keys[issuertypes.StoreKey],
+		keys[didtypes.StoreKey],
 	)
 
 	app.mm = module.NewManager(
