@@ -45,7 +45,7 @@ lint:
 
 init-dev: init-chain init-validator
 	
-start-dev:
+start-dev: init-dev
 	go run cmd/poad/main.go cmd/poad/genaccounts.go start --home ./build/.poad
 
 init-chain:
