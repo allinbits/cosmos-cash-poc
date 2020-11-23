@@ -60,7 +60,7 @@ func GetCmdCreateDidDocument(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 			pubKeyBase58 := info.GetPubKey().Address()
-			pubKey := types.NewPubKey(types.Context, id, accAddr, pubKeyBase58.String())
+			pubKey := types.NewPubKey(id, "Ed25519VerificationKey2018", accAddr, pubKeyBase58.String())
 			authentication := types.PubKeys{pubKey}
 
 			msg := types.NewMsgCreateDidDocument(types.Context, id, authentication, nil, accAddr)
