@@ -27,6 +27,7 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	didQueryCmd.AddCommand(
 		flags.GetCommands(
 			GetCmdDidDocumentAll(queryRoute, cdc),
+			GetCmdVerifiableCredentialAll(queryRoute, cdc),
 		)...,
 	)
 
@@ -55,6 +56,32 @@ func GetCmdDidDocumentAll(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			}
 
 			return cliCtx.PrintOutput(diddocuments)
+		},
+	}
+}
+
+func GetCmdVerifiableCredentialAll(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "verifiable-credentials",
+		Short: "verifiable-credentials",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			resKVs, _, err := cliCtx.QuerySubspace(types.VerifiableCredentialKey, "did")
+			if err != nil {
+				return err
+			}
+
+			var verifiablecreds []types.VerifiableCredential
+			for _, kv := range resKVs {
+				vc := types.VerifiableCredential{}
+				cdc.UnmarshalBinaryBare(kv.Value, &vc)
+				verifiablecreds = append(verifiablecreds, vc)
+
+			}
+
+			return cliCtx.PrintOutput(verifiablecreds)
 		},
 	}
 }

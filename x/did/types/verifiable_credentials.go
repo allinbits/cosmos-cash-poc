@@ -34,12 +34,22 @@ definition: https://www.w3.org/TR/vc-data-model/#zero-knowledge-proofs
 */
 
 type VerifiableCredential struct {
-	Context           string      `json:"@context"`
-	ID                string      `json:"id"`
-	Type              string      `json:"type"`
-	Issuer            string      `json:"issuer"`
-	CredentialSubject interface{} `json:credentialsubject`
-	Proof             Proof       `json:proof`
+	Context string `json:"@context"`
+	ID      string `json:"id"`
+	Type    string `json:"type"`
+	Issuer  string `json:"issuer"`
+	// TODO: CredentialSubject interface{} `json:credentialsubject`
+	Proof Proof `json:proof`
+}
+
+func NewVerifiableCredential(context string, id string, vctype string, issuer string, proof Proof) VerifiableCredential {
+	return VerifiableCredential{
+		Context: context,
+		ID:      id,
+		Type:    vctype,
+		Issuer:  issuer,
+		Proof:   proof,
+	}
 }
 
 type Proof struct {
@@ -48,6 +58,16 @@ type Proof struct {
 	Attributes                string `json:"attributes"`
 	Signature                 string `json:"signature"`
 	SignatureCorrectnessProof string `json:"signatureproof"`
+}
+
+func NewProof(ptype string, issuerData string, attributes string, signature string, signatureProof string) Proof {
+	return Proof{
+		Type:                      ptype,
+		IssuerData:                issuerData,
+		Attributes:                attributes,
+		Signature:                 signature,
+		SignatureCorrectnessProof: signatureProof,
+	}
 }
 
 // TODO: CredentialSchema
