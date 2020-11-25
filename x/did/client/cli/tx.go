@@ -30,6 +30,7 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 	didTxCmd.AddCommand(flags.PostCommands(
 		GetCmdCreateDidDocument(cdc),
+		GetCmdCreateVerifiableCredential(cdc),
 	)...)
 
 	return didTxCmd
@@ -52,7 +53,6 @@ func GetCmdCreateDidDocument(cdc *codec.Codec) *cobra.Command {
 
 			accAddr := cliCtx.GetFromAddress()
 			id := types.DidIdentifer + accAddr.String()
-			fmt.Println(id)
 			keybase, err := keys.NewKeyring(sdk.KeyringServiceName(),
 				viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), inBuf)
 			info, err := keybase.GetByAddress(accAddr)
@@ -65,6 +65,35 @@ func GetCmdCreateDidDocument(cdc *codec.Codec) *cobra.Command {
 
 			msg := types.NewMsgCreateDidDocument(types.Context, id, authentication, nil, accAddr)
 			err = msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+// GetCmdCreateDidDocument is the CLI command for sending a CreateDidDocument transaction
+func GetCmdCreateVerifiableCredential(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "create-verifiable-credential",
+		Short: "create an did document for an address",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			// if err := cliCtx.EnsureAccountExists(); err != nil {
+			// 	return err
+			// }
+
+			accAddr := cliCtx.GetFromAddress()
+			id := types.DidIdentifer + accAddr.String()
+
+			msg := types.NewMsgCreateVerifiableCredential(types.VcContext, id, "VerifiableCredential", accAddr.String(), types.Proof{}, accAddr)
+			err := msg.ValidateBasic()
 			if err != nil {
 				return err
 			}

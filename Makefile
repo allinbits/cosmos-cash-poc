@@ -168,6 +168,12 @@ create-did-document:
 query-all-did-documents:
 	go run cmd/poacli/main.go query did did-documents --home ./build/.poad --output json | jq
 
+create-verifiable-cred:
+	go run cmd/poacli/main.go tx did create-verifiable-credential --trust-node --from validator  --chain-id cash
+
+query-all-verifiable-cred:
+	go run cmd/poacli/main.go query did verifiable-credentials --home ./build/.poad --output json | jq
+
 .PHONY:					\
 	test				\
 	lint				\

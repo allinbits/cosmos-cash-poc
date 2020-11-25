@@ -43,6 +43,6 @@ func (msg MsgCreateDidDocument) GetSigners() []sdk.AccAddress {
 // GetSignBytes encodes the message for signing
 func (msg MsgCreateDidDocument) GetSignBytes() []byte {
 	ModuleCdc := codec.New()
-	ModuleCdc.RegisterConcrete(MsgCreateDidDocument{}, "issuer/MsgCreateDidDocument", nil)
+	ModuleCdc.RegisterConcrete(MsgCreateDidDocument{}, "did/MsgCreateDidDocument", nil)
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
