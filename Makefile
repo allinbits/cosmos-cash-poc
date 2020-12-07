@@ -49,13 +49,13 @@ start-dev: init-dev
 	go run cmd/poad/main.go cmd/poad/genaccounts.go start --home ./build/.poad
 
 init-chain:
-	go run cmd/poad/main.go cmd/poad/genaccounts.go init --chain-id=cash cash --home ./build/.poad
-	echo "y" | go run cmd/poacli/main.go keys add validator
+	go run cmd/poad/main.go cmd/poad/genaccounts.go init --chain-id=cash cash --home ./build/.poad 
+	echo "y" | go run cmd/poacli/main.go keys add validator --keyring-backend test
 
 init-validator:
-	go run cmd/poad/main.go cmd/poad/genaccounts.go add-genesis-account $(shell go run cmd/poacli/main.go keys show validator -a) 1000000000stake --home ./build/.poad
-	go run cmd/poad/main.go cmd/poad/genaccounts.go gentx --name validator --home ./build/.poad --moniker cash --website test.com --identity test --security-contact test@test.com --details atest
-	go run cmd/poad/main.go cmd/poad/genaccounts.go collect-gentxs --home ./build/.poad
+	go run cmd/poad/main.go cmd/poad/genaccounts.go add-genesis-account $(shell go run cmd/poacli/main.go keys show validator -a --keyring-backend test) 1000000000stake --home ./build/.poad --keyring-backend test
+	go run cmd/poad/main.go cmd/poad/genaccounts.go gentx --name validator --home ./build/.poad --moniker cash --website test.com --identity test --security-contact test@test.com --details atest --keyring-backend test
+	go run cmd/poad/main.go cmd/poad/genaccounts.go collect-gentxs --home ./build/.poad 
 
 clean:
 	sudo rm -r ./build
