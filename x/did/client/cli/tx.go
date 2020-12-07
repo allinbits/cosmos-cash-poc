@@ -77,7 +77,7 @@ func GetCmdCreateDidDocument(cdc *codec.Codec) *cobra.Command {
 // GetCmdCreateDidDocument is the CLI command for sending a CreateDidDocument transaction
 func GetCmdCreateVerifiableCredential(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "create-verifiable-credential",
+		Use:   "create-verifiable-credential [address]",
 		Short: "create an did document for an address",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {

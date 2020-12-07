@@ -13,6 +13,11 @@ import (
 	"github.com/allinbits/cosmos-cash-poa/x/did"
 	didkeeper "github.com/allinbits/cosmos-cash-poa/x/did/keeper"
 	didtypes "github.com/allinbits/cosmos-cash-poa/x/did/types"
+
+	"github.com/allinbits/cosmos-cash-poa/x/regulator"
+	regulatorkeeper "github.com/allinbits/cosmos-cash-poa/x/regulator/keeper"
+	regulatortypes "github.com/allinbits/cosmos-cash-poa/x/regulator/types"
+
 	"github.com/allinbits/cosmos-cash-poa/x/issuer"
 	issuerkeeper "github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
 	issuertypes "github.com/allinbits/cosmos-cash-poa/x/issuer/types"
@@ -48,6 +53,7 @@ var (
 		poa.AppModuleBasic{},
 		issuer.AppModuleBasic{},
 		did.AppModuleBasic{},
+		regulator.AppModuleBasic{},
 	)
 
 	maccPerms = map[string][]string{
@@ -77,14 +83,15 @@ type NewApp struct {
 
 	subspaces map[string]params.Subspace
 
-	accountKeeper auth.AccountKeeper
-	bankKeeper    bank.Keeper
-	supplyKeeper  supply.Keeper
-	paramsKeeper  params.Keeper
-	poaKeeper     poakeeper.Keeper
-	issuerKeeper  issuerkeeper.Keeper
-	didKeeper     didkeeper.Keeper
-	mm            *module.Manager
+	accountKeeper   auth.AccountKeeper
+	bankKeeper      bank.Keeper
+	supplyKeeper    supply.Keeper
+	paramsKeeper    params.Keeper
+	poaKeeper       poakeeper.Keeper
+	issuerKeeper    issuerkeeper.Keeper
+	didKeeper       didkeeper.Keeper
+	regulatorKeeper regulatorkeeper.Keeper
+	mm              *module.Manager
 
 	sm *module.SimulationManager
 }
@@ -109,6 +116,7 @@ func NewInitApp(
 		poatypes.StoreKey,
 		issuertypes.StoreKey,
 		didtypes.StoreKey,
+		regulatortypes.StoreKey,
 	)
 
 	tKeys := sdk.NewTransientStoreKeys(params.TStoreKey)
@@ -167,6 +175,11 @@ func NewInitApp(
 		keys[didtypes.StoreKey],
 	)
 
+	app.regulatorKeeper = regulatorkeeper.NewKeeper(
+		app.cdc,
+		keys[regulatortypes.StoreKey],
+	)
+
 	app.mm = module.NewManager(
 		genutil.NewAppModule(app.accountKeeper, app.poaKeeper, app.BaseApp.DeliverTx),
 		auth.NewAppModule(app.accountKeeper),
@@ -175,6 +188,7 @@ func NewInitApp(
 		poa.NewAppModule(app.poaKeeper, app.bankKeeper),
 		issuer.NewAppModule(app.issuerKeeper, app.bankKeeper),
 		did.NewAppModule(app.didKeeper),
+		regulator.NewAppModule(app.regulatorKeeper),
 	)
 
 	app.mm.SetOrderEndBlockers(poatypes.ModuleName)
@@ -187,6 +201,7 @@ func NewInitApp(
 		poatypes.ModuleName,
 		supply.ModuleName,
 		genutil.ModuleName,
+		//regulatortypes.ModuleName,
 	)
 
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
@@ -227,6 +242,8 @@ func (app *NewApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.
 	var genesisState simapp.GenesisState
 
 	app.cdc.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
+
+	app.mm.Modules["regulator"].InitGenesis(ctx, genesisState["auth"])
 
 	return app.mm.InitGenesis(ctx, genesisState)
 }

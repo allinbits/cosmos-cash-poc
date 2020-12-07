@@ -1,5 +1,9 @@
 package types
 
+var (
+	RegualtorKey = []byte{0x61} // prefix for each key to a Regualtor
+)
+
 const (
 	// ModuleName is the name of the module
 	ModuleName = "regulator"
