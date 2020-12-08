@@ -174,6 +174,14 @@ create-verifiable-cred:
 query-all-verifiable-cred:
 	go run cmd/poacli/main.go query did verifiable-credentials --home ./build/.poad --output json | jq
 
+### regulators module
+
+create-regulator:
+	go run cmd/poacli/main.go tx regulator create-regulator cosmos1zryv3ucemjswk5mpg8gcey9xv06ugux8mmevmc --trust-node --from validator --chain-id cash --keyring-backend test
+
+query-all-regulators:
+	 go run cmd/poacli/main.go query regulator regulators --output json | jq
+
 .PHONY:					\
 	test				\
 	lint				\
