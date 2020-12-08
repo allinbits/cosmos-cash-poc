@@ -33,6 +33,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/params"
@@ -243,7 +244,9 @@ func (app *NewApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.
 
 	app.cdc.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
 
-	app.mm.Modules["regulator"].InitGenesis(ctx, genesisState["auth"])
+	var authGenesisState authtypes.GenesisState
+	app.cdc.MustUnmarshalJSON(genesisState["auth"], &authGenesisState)
+	regulator.InitGenesis(ctx, app.regulatorKeeper, authGenesisState)
 
 	return app.mm.InitGenesis(ctx, genesisState)
 }

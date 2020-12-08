@@ -1,7 +1,7 @@
 package types
 
 var (
-	RegualtorKey = []byte{0x61} // prefix for each key to a Regualtor
+	RegulatorKey = []byte{0x61} // prefix for each key to a Regualtor
 )
 
 const (

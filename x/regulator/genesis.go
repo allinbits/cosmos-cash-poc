@@ -11,9 +11,12 @@ import (
 // InitGenesis initialize default parameters
 // and the keeper's address to pubkey map
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, data authtypes.GenesisState) {
-	// To keep the module simple we set all genesis accounts as regualtos
-	fmt.Println(data)
-	//k.SetRegulator()
+	// To keep the module simple we set all genesis accounts as regualtors
+	for _, account := range data.Accounts {
+		fmt.Println(account)
+		reg := types.NewRegulator(account.GetAddress())
+		k.SetRegulator(ctx, []byte(account.GetAddress()), reg)
+	}
 }
 
 // ExportGenesis writes the current store values

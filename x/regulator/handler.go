@@ -17,7 +17,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		// this line is used by starport scaffolding # 1
 		// 	return handleMsg<Action>(ctx, k, msg)
 		case types.MsgCreateRegualtor:
-			return handleMsgCreateRegualtor(ctx, msg, k)
+			return handleMsgCreateRegulator(ctx, msg, k)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -26,18 +26,18 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 }
 
 // handle<Action> does x
-func handleMsgCreateRegualtor(ctx sdk.Context, msg types.MsgCreateRegualtor, k keeper.Keeper) (*sdk.Result, error) {
+func handleMsgCreateRegulator(ctx sdk.Context, msg types.MsgCreateRegualtor, k keeper.Keeper) (*sdk.Result, error) {
 	// Only trusted regualtors can create other regualors
-	_, found := k.GetRegualtor(ctx, []byte(msg.Owner))
+	_, found := k.GetRegulator(ctx, []byte(msg.Owner))
 	if !found {
 		return nil, nil //fmt.Error("regualator not found")
 	}
 
-	regualtor := types.NewRegualtor(
+	reg := types.NewRegulator(
 		msg.Address,
 	)
 
-	k.SetRegualtor(ctx, []byte(msg.Address), regualtor)
+	k.SetRegulator(ctx, []byte(msg.Address), reg)
 
 	/*	ctx.EventManager().EmitEvents(sdk.Events{
 			sdk.NewEvent(

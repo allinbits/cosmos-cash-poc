@@ -8,7 +8,7 @@ import (
 // RegisterCodec registers concrete types on codec
 func RegisterCodec(cdc *codec.Codec) {
 	// this line is used by starport scaffolding # 1
-	//cdc.RegisterInterface((*exported.GenesisAccount)(nil), 1)
+	//cdc.RegisterInterface((*exported.GenesisAccount)(nil), nil)
 
 	cdc.RegisterConcrete(MsgCreateRegualtor{}, "regualtor/MsgCreateRegualtor", nil)
 }

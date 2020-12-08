@@ -27,19 +27,17 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	}
 
 	regulatorTxCmd.AddCommand(flags.PostCommands(
-	// this line is used by starport scaffolding # 1
-	// TODO: Add tx based commands
-	// GetCmd<Action>(cdc)
+		GetCmdCreateRegulator(cdc),
 	)...)
 
 	return regulatorTxCmd
 }
 
-// GetCmdCreateDidDocument is the CLI command for sending a CreateDidDocument transaction
-func GetCmdCreateRegualtor(cdc *codec.Codec) *cobra.Command {
+// GetCmdCreateRegulator is the CLI command for sending a CreateDidDocument transaction
+func GetCmdCreateRegulator(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "create-regualator [address]",
-		Short: "create a regualtor for an address",
+		Use:   "create-regulator [address]",
+		Short: "create a regulator for an address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -51,10 +49,12 @@ func GetCmdCreateRegualtor(cdc *codec.Codec) *cobra.Command {
 			// }
 
 			accAddr := cliCtx.GetFromAddress()
-			regAddr, _ := sdk.AccAddressFromBech32(args[0])
-
+			regAddr, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
 			msg := types.NewMsgCreateRegualtor(regAddr, accAddr)
-			err := msg.ValidateBasic()
+			err = msg.ValidateBasic()
 			if err != nil {
 				return err
 			}

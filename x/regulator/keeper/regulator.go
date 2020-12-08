@@ -5,21 +5,21 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (k Keeper) SetRegualtor(ctx sdk.Context, key []byte, document types.Regualtor) {
-	k.Set(ctx, key, types.RegualtorKey, document)
+func (k Keeper) SetRegulator(ctx sdk.Context, key []byte, reg types.Regulator) {
+	k.Set(ctx, key, types.RegulatorKey, reg)
 }
 
-func (k Keeper) GetRegualtor(ctx sdk.Context, key []byte) (types.Regualtor, bool) {
-	val, found := k.Get(ctx, key, types.RegualtorKey, k.UnmarshalRegualtor)
-	return val.(types.Regualtor), found
+func (k Keeper) GetRegulator(ctx sdk.Context, key []byte) (types.Regulator, bool) {
+	val, found := k.Get(ctx, key, types.RegulatorKey, k.UnmarshalRegulator)
+	return val.(types.Regulator), found
 }
 
-func (k Keeper) UnmarshalRegualtor(value []byte) (interface{}, bool) {
-	document := types.Regualtor{}
-	err := k.cdc.UnmarshalBinaryBare(value, &document)
+func (k Keeper) UnmarshalRegulator(value []byte) (interface{}, bool) {
+	reg := types.Regulator{}
+	err := k.cdc.UnmarshalBinaryBare(value, &reg)
 	if err != nil {
-		return types.Regualtor{}, false
+		return types.Regulator{}, false
 	}
 
-	return document, true
+	return reg, true
 }
