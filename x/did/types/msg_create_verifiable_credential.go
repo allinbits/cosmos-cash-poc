@@ -7,17 +7,19 @@ import (
 
 // Verifiable Credential message
 type MsgCreateVerifiableCredential struct {
-	Context string `json:"@context"`
-	ID      string `json:"id"`
-	VcType  string `json:"type"`
-	Issuer  string `json:"issuer"`
-	// TODO: CredentialSubject interface{} `json:credentialsubject`
-	Proof Proof          `json:"proof"`
-	Owner sdk.AccAddress `json:"owner"`
+	DidUrl            string            `json:"didurl"`
+	Context           string            `json:"@context"`
+	ID                string            `json:"id"`
+	VcType            string            `json:"type"`
+	Issuer            string            `json:"issuer"`
+	CredentialSubject CredentialSubject `json:"credentialsubject"`
+	Proof             Proof             `json:"proof"`
+	Owner             sdk.AccAddress    `json:"owner"`
 }
 
-func NewMsgCreateVerifiableCredential(context string, id string, vctype string, issuer string, proof Proof, owner sdk.AccAddress) MsgCreateVerifiableCredential {
+func NewMsgCreateVerifiableCredential(didurl string, context string, id string, vctype string, issuer string, proof Proof, owner sdk.AccAddress) MsgCreateVerifiableCredential {
 	return MsgCreateVerifiableCredential{
+		DidUrl:  didurl,
 		Context: context,
 		ID:      id,
 		VcType:  vctype,

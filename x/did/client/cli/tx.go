@@ -78,8 +78,8 @@ func GetCmdCreateDidDocument(cdc *codec.Codec) *cobra.Command {
 func GetCmdCreateVerifiableCredential(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "create-verifiable-credential [address]",
-		Short: "create an did document for an address",
-		Args:  cobra.ExactArgs(0),
+		Short: "create an verifiable cred for an address",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -92,7 +92,7 @@ func GetCmdCreateVerifiableCredential(cdc *codec.Codec) *cobra.Command {
 			accAddr := cliCtx.GetFromAddress()
 			id := types.DidIdentifer + accAddr.String()
 
-			msg := types.NewMsgCreateVerifiableCredential(types.VcContext, id, "VerifiableCredential", accAddr.String(), types.Proof{}, accAddr)
+			msg := types.NewMsgCreateVerifiableCredential(types.DidIdentifer+args[0], types.VcContext, id, "VerifiableCredential", accAddr.String(), types.Proof{}, accAddr)
 			err := msg.ValidateBasic()
 			if err != nil {
 				return err

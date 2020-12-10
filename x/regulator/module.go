@@ -8,6 +8,7 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
+	didkeeper "github.com/allinbits/cosmos-cash-poa/x/did/keeper"
 	"github.com/allinbits/cosmos-cash-poa/x/regulator/client/cli"
 	"github.com/allinbits/cosmos-cash-poa/x/regulator/client/rest"
 	"github.com/allinbits/cosmos-cash-poa/x/regulator/keeper"
@@ -74,15 +75,17 @@ func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 
-	keeper keeper.Keeper
+	keeper         keeper.Keeper
+	IdentityKeeper didkeeper.Keeper
 	// TODO: Add keepers that your application depends on
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(k keeper.Keeper /*TODO: Add Keepers that your application depends on*/) AppModule {
+func NewAppModule(k keeper.Keeper, dk didkeeper.Keeper) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{},
 		keeper:         k,
+		IdentityKeeper: dk,
 		// TODO: Add keepers that your application depends on
 	}
 }
