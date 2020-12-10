@@ -189,7 +189,7 @@ func NewInitApp(
 		poa.NewAppModule(app.poaKeeper, app.bankKeeper),
 		issuer.NewAppModule(app.issuerKeeper, app.bankKeeper),
 		did.NewAppModule(app.didKeeper),
-		regulator.NewAppModule(app.regulatorKeeper),
+		regulator.NewAppModule(app.regulatorKeeper, app.didKeeper),
 	)
 
 	app.mm.SetOrderEndBlockers(poatypes.ModuleName)

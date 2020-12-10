@@ -39,38 +39,39 @@ func handleMsgCreateDidDocument(ctx sdk.Context, msg types.MsgCreateDidDocument,
 	//document, _ := k.GetDidDocument(ctx, []byte(msg.ID))
 	//fmt.Println(document)
 
-	/*	ctx.EventManager().EmitEvents(sdk.Events{
-			sdk.NewEvent(
-				types.EventTypeCreateIssuer,
-				sdk.NewAttribute(types.AttributeKeyIssuerAddress, msg.Address.String()),
-				sdk.NewAttribute(types.AttributeKeyIssuerAmount, msg.Amount),
-				sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
-			),
-		})
-	/*/
 	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
 }
 
 func handleMsgCreateVerifiableCredential(ctx sdk.Context, msg types.MsgCreateVerifiableCredential, k keeper.Keeper) (*sdk.Result, error) {
 	// TODO: check if issuer exists
+	document, found := k.GetDidDocument(ctx, []byte(msg.DidUrl))
+	if !found {
+		return nil, fmt.Errorf("no did found for user: %s", msg.DidUrl)
+	}
+	fmt.Println(document)
+
+	cred := types.NewCredentialSubject("Regulator", true)
+	//issuerCred := types.NewCredentialSubject("Issuer", true)
+	//userCred := types.NewCredentialSubject("User", true)
+	storeValue := msg.Issuer + ":" + msg.DidUrl
+
 	verifiableCredential := types.NewVerifiableCredential(
 		msg.Context,
-		msg.ID,
+		storeValue,
 		msg.VcType,
 		msg.Issuer,
+		cred,
 		msg.Proof,
 	)
 
-	k.SetVerifiableCredential(ctx, []byte(msg.ID), verifiableCredential)
+	service := types.NewService(storeValue, "role", "cash-bc")
 
-	/*	ctx.EventManager().EmitEvents(sdk.Events{
-			sdk.NewEvent(
-				types.EventTypeCreateIssuer,
-				sdk.NewAttribute(types.AttributeKeyIssuerAddress, msg.Address.String()),
-				sdk.NewAttribute(types.AttributeKeyIssuerAmount, msg.Amount),
-				sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
-			),
-		})
-	/*/
+	//TODO: check if serivce id exists
+
+	document.Service = append(document.Service, service)
+
+	k.SetVerifiableCredential(ctx, []byte(storeValue), verifiableCredential)
+	k.SetDidDocument(ctx, []byte(document.ID), document)
+
 	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
 }

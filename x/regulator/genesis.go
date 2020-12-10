@@ -1,7 +1,6 @@
 package regulator
 
 import (
-	"fmt"
 	"github.com/allinbits/cosmos-cash-poa/x/regulator/keeper"
 	"github.com/allinbits/cosmos-cash-poa/x/regulator/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,7 +12,6 @@ import (
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, data authtypes.GenesisState) {
 	// To keep the module simple we set all genesis accounts as regualtors
 	for _, account := range data.Accounts {
-		fmt.Println(account)
 		reg := types.NewRegulator(account.GetAddress())
 		k.SetRegulator(ctx, []byte(account.GetAddress()), reg)
 	}

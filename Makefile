@@ -84,7 +84,7 @@ localnet-start: init-dev export-key
 	NODE0ADDRESS=$(shell go run cmd/poad/main.go cmd/poad/genaccounts.go tendermint show-node-id --home ./build/.poad)@192.16.10.2:26656 docker-compose up
 
 export-key:
-	echo "password1234\npassword1234" | poacli keys export validator 2> ./build/validator
+	echo "password1234\npassword1234" | poacli keys export validator --keyring-backend test 2> ./build/validator
 
 ###############################################################################
 ###                           Helpful Commands	                            ###
@@ -163,16 +163,16 @@ freeze-account:
 ### did module commands
 
 create-did-document:
-	go run cmd/poacli/main.go tx did create-did-document --trust-node --from validator  --chain-id cash
+	go run cmd/poacli/main.go tx did create-did-document --trust-node --from validator  --chain-id cash --keyring-backend test
 
 query-all-did-documents:
 	go run cmd/poacli/main.go query did did-documents --home ./build/.poad --output json | jq
 
 create-verifiable-cred:
-	go run cmd/poacli/main.go tx did create-verifiable-credential --trust-node --from validator  --chain-id cash
+	go run cmd/poacli/main.go tx did create-verifiable-credential $(shell go run cmd/poacli/main.go keys show validator -a --keyring-backend test) --trust-node --from validator  --chain-id cash --keyring-backend test
 
 query-all-verifiable-cred:
-	go run cmd/poacli/main.go query did verifiable-credentials --home ./build/.poad --output json | jq
+	go run cmd/poacli/main.go query did verifiable-credentials  --home ./build/.poad --output json | jq
 
 ### regulators module
 

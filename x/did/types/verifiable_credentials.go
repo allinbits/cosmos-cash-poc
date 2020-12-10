@@ -34,21 +34,34 @@ definition: https://www.w3.org/TR/vc-data-model/#zero-knowledge-proofs
 */
 
 type VerifiableCredential struct {
-	Context string `json:"@context"`
-	ID      string `json:"id"`
-	Type    string `json:"type"`
-	Issuer  string `json:"issuer"`
-	// TODO: CredentialSubject interface{} `json:credentialsubject`
-	Proof Proof `json:proof`
+	Context           string            `json:"@context"`
+	ID                string            `json:"id"`
+	Type              string            `json:"type"`
+	Issuer            string            `json:"issuer"`
+	CredentialSubject CredentialSubject `json:"credentialsubject"`
+	Proof             Proof             `json:"proof"`
 }
 
-func NewVerifiableCredential(context string, id string, vctype string, issuer string, proof Proof) VerifiableCredential {
+func NewVerifiableCredential(context string, id string, vctype string, issuer string, credentialSubject CredentialSubject, proof Proof) VerifiableCredential {
 	return VerifiableCredential{
-		Context: context,
-		ID:      id,
-		Type:    vctype,
-		Issuer:  issuer,
-		Proof:   proof,
+		Context:           context,
+		ID:                id,
+		Type:              vctype,
+		Issuer:            issuer,
+		CredentialSubject: credentialSubject,
+		Proof:             proof,
+	}
+}
+
+type CredentialSubject struct {
+	Role       string `json:"role"`
+	IsVerified bool   `json:"isverified"`
+}
+
+func NewCredentialSubject(role string, isVerified bool) CredentialSubject {
+	return CredentialSubject{
+		Role:       role,
+		IsVerified: isVerified,
 	}
 }
 
@@ -69,5 +82,3 @@ func NewProof(ptype string, issuerData string, attributes string, signature stri
 		SignatureCorrectnessProof: signatureProof,
 	}
 }
-
-// TODO: CredentialSchema

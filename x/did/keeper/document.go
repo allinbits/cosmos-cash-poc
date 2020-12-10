@@ -21,5 +21,9 @@ func (k Keeper) UnmarshalDidDocument(value []byte) (interface{}, bool) {
 		return types.DidDocument{}, false
 	}
 
+	if document.Context == "" {
+		return types.DidDocument{}, false
+	}
+
 	return document, true
 }
