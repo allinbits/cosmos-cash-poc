@@ -21,5 +21,9 @@ func (k Keeper) UnmarshalVerifiableCredential(value []byte) (interface{}, bool) 
 		return types.VerifiableCredential{}, false
 	}
 
+	if document.Context == "" {
+		return types.VerifiableCredential{}, false
+	}
+
 	return document, true
 }

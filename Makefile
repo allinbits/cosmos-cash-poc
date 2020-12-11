@@ -124,17 +124,25 @@ create-custom-issuer-key:
 create-custom-issuer: create-custom-issuer-key
 	go run cmd/poacli/main.go tx issuer create-issuer $$CUSTOM_TOKEN-issuer $(shell go run cmd/poacli/main.go keys show $$CUSTOM_TOKEN-issuer -a) $$CUSTOM_TOKEN 100000000000 --trust-node --from validator --chain-id cash --home ./build/.poad
 
-create-issuer-key:
-	echo "y" | go run cmd/poacli/main.go keys add euro-token-issuer
+send-stake-token:
+	poacli tx send $(shell go run cmd/poacli/main.go keys show validator -a --keyring-backend test) $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a --keyring-backend test) 10000stake --from validator -y --trust-node --chain-id cash --keyring-backend test
 
-create-issuer: create-issuer-key
-	go run cmd/poacli/main.go tx issuer create-issuer euro-token-issuer $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) eurotoken 100000000000 --trust-node --from validator --chain-id cash --home ./build/.poad
+create-issuer-key:
+	echo "y" | go run cmd/poacli/main.go keys add euro-token-issuer --keyring-backend test
+
+create-issuer: create-issuer-key send-stake-token
+	@sleep 5
+	go run cmd/poacli/main.go tx did create-did-document --trust-node --from euro-token-issuer  --chain-id cash --keyring-backend test
+	@sleep 5
+	go run cmd/poacli/main.go tx did create-verifiable-credential $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a --keyring-backend test) --trust-node --from validator  --chain-id cash --keyring-backend test
+	@sleep 5
+	go run cmd/poacli/main.go tx issuer create-issuer euro-token-issuer $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a --keyring-backend test) eurotoken 100000000000 --trust-node --from euro-token-issuer --chain-id cash --keyring-backend test
 
 query-all-issuers:
 	go run cmd/poacli/main.go query issuer issuers --home ./build/.poad
 
 send-token:
-	poacli tx send $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) $(shell go run cmd/poacli/main.go keys show validator -a) 50000000eurotoken --from euro-token-issuer -y --trust-node --chain-id cash
+	poacli tx send $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a --keyring-backend test) $(shell go run cmd/poacli/main.go keys show validator -a --keyring-backend test) 50000000eurotoken --from euro-token-issuer -y --trust-node --chain-id cash --keyring-backend test
 
 send-token-back:
 	poacli tx send $(shell go run cmd/poacli/main.go keys show validator -a) $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) 10000000eurotoken --from euro-token-issuer -y --trust-node --chain-id cash
