@@ -12,6 +12,8 @@ import (
 	"github.com/allinbits/cosmos-cash-poa/x/did/client/rest"
 	"github.com/allinbits/cosmos-cash-poa/x/did/keeper"
 	"github.com/allinbits/cosmos-cash-poa/x/did/types"
+	issuerkeeper "github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
+	regulatorkeeper "github.com/allinbits/cosmos-cash-poa/x/regulator/keeper"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -74,16 +76,19 @@ func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 
-	keeper keeper.Keeper
-	// TODO: Add keepers that your application depends on
+	keeper          keeper.Keeper
+	RegulatorKeeper regulatorkeeper.Keeper
+	IssuerKeeper    issuerkeeper.Keeper
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(k keeper.Keeper /*TODO: Add Keepers that your application depends on*/) AppModule {
+func NewAppModule(k keeper.Keeper, rk regulatorkeeper.Keeper, ik issuerkeeper.Keeper) AppModule {
+
 	return AppModule{
-		AppModuleBasic: AppModuleBasic{},
-		keeper:         k,
-		// TODO: Add keepers that your application depends on
+		AppModuleBasic:  AppModuleBasic{},
+		keeper:          k,
+		RegulatorKeeper: rk,
+		IssuerKeeper:    ik,
 	}
 }
 
@@ -102,7 +107,7 @@ func (AppModule) Route() string {
 
 // NewHandler returns an sdk.Handler for the did module.
 func (am AppModule) NewHandler() sdk.Handler {
-	return NewHandler(am.keeper)
+	return NewHandler(am.keeper, am.RegulatorKeeper, am.IssuerKeeper)
 }
 
 // QuerierRoute returns the did module's querier route name.

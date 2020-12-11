@@ -39,14 +39,5 @@ func handleMsgCreateRegulator(ctx sdk.Context, msg types.MsgCreateRegualtor, k k
 
 	k.SetRegulator(ctx, []byte(msg.Address), reg)
 
-	/*	ctx.EventManager().EmitEvents(sdk.Events{
-			sdk.NewEvent(
-				types.EventTypeCreateIssuer,
-				sdk.NewAttribute(types.AttributeKeyIssuerAddress, msg.Address.String()),
-				sdk.NewAttribute(types.AttributeKeyIssuerAmount, msg.Amount),
-				sdk.NewAttribute(sdk.AttributeKeySender, msg.Owner.String()),
-			),
-		})
-	/*/
 	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
 }
