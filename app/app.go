@@ -188,7 +188,7 @@ func NewInitApp(
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		poa.NewAppModule(app.poaKeeper, app.bankKeeper),
 		issuer.NewAppModule(app.issuerKeeper, app.bankKeeper),
-		did.NewAppModule(app.didKeeper),
+		did.NewAppModule(app.didKeeper, app.regulatorKeeper, app.issuerKeeper),
 		regulator.NewAppModule(app.regulatorKeeper, app.didKeeper),
 	)
 
