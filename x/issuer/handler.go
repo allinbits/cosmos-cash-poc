@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
+	didkeeper "github.com/allinbits/cosmos-cash-poa/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash-poa/x/did/types"
 	"github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
 	"github.com/allinbits/cosmos-cash-poa/x/issuer/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,12 +13,12 @@ import (
 )
 
 // NewHandler ...
-func NewHandler(k keeper.Keeper) sdk.Handler {
+func NewHandler(k keeper.Keeper, idk didkeeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 		switch msg := msg.(type) {
 		case types.MsgCreateIssuer:
-			return handleMsgCreateIssuer(ctx, msg, k)
+			return handleMsgCreateIssuer(ctx, msg, k, idk)
 		case types.MsgBurnToken:
 			return handleMsgBurnToken(ctx, msg, k)
 		case types.MsgMintToken:
@@ -36,7 +38,21 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 	}
 }
 
-func handleMsgCreateIssuer(ctx sdk.Context, msg types.MsgCreateIssuer, k keeper.Keeper) (*sdk.Result, error) {
+func handleMsgCreateIssuer(ctx sdk.Context, msg types.MsgCreateIssuer, k keeper.Keeper, idk didkeeper.Keeper) (*sdk.Result, error) {
+	// TODO: check if regulator
+	document, found := idk.GetDidDocument(ctx, []byte(didtypes.DidIdentifer+msg.Owner.String()))
+	if !found {
+		return nil, fmt.Errorf("identity not found")
+	}
+	cred, found := idk.GetVerifiableCredential(ctx, []byte(document.Service[0].ID))
+	if !found {
+		return nil, fmt.Errorf("creds not found")
+	}
+
+	if cred.CredentialSubject.Role != "Issuer" {
+		return nil, fmt.Errorf("role incorrect")
+	}
+
 	if _, found := k.GetIssuer(ctx, msg.Address); found {
 		return nil, nil
 	}

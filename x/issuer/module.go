@@ -6,8 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 
-	abci "github.com/tendermint/tendermint/abci/types"
-
+	didkeeper "github.com/allinbits/cosmos-cash-poa/x/did/keeper"
 	"github.com/allinbits/cosmos-cash-poa/x/issuer/client/cli"
 	"github.com/allinbits/cosmos-cash-poa/x/issuer/client/rest"
 	"github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
@@ -17,6 +16,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // Type check to ensure the interface is properly implemented
@@ -75,18 +75,20 @@ func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 
-	keeper     keeper.Keeper
-	coinKeeper bank.Keeper
+	keeper         keeper.Keeper
+	coinKeeper     bank.Keeper
+	IdentityKeeper didkeeper.Keeper
 	// TODO: Add keepers that your application depends on
 
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(k keeper.Keeper, bankKeeper bank.Keeper) AppModule {
+func NewAppModule(k keeper.Keeper, bankKeeper bank.Keeper, ik didkeeper.Keeper) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{},
 		keeper:         k,
 		coinKeeper:     bankKeeper,
+		IdentityKeeper: ik,
 		// TODO: Add keepers that your application depends on
 	}
 }
@@ -106,7 +108,7 @@ func (AppModule) Route() string {
 
 // NewHandler returns an sdk.Handler for the issuer module.
 func (am AppModule) NewHandler() sdk.Handler {
-	return NewHandler(am.keeper)
+	return NewHandler(am.keeper, am.IdentityKeeper)
 }
 
 // QuerierRoute returns the issuer module's querier route name.
