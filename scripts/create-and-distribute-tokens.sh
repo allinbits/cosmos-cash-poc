@@ -20,10 +20,24 @@ createIssuer() {
 	# get the address of the issuer key
 	eval ADDRESS=$(docker exec -e ISSUER_NAME=$1 $3 /bin/sh -c 'poacli keys show $(echo $ISSUER_NAME) -a --keyring-backend test')
 
-	echo "Creating issuer with name $1 and token $2: on node $4\n"
+	# send tokens to the issuer
+	docker exec -e ADDRESS=$ADDRESS $4 /bin/sh -c 'poacli tx send $(poacli keys show validator -a --keyring-backend test) $(echo $ADDRESS) 100000stake -y --trust-node --from validator --chain-id cash --keyring-backend test'
+
+	sleep 5
+	
+	echo "Creating decentrailsed identifer for issuer $1\n"
+	docker exec -e ISSUER_NAME=$1 $3 /bin/sh -c 'poacli tx did create-did-document --trust-node --from $(echo $ISSUER_NAME) --chain-id cash --keyring-backend test -y'
+
+	sleep 5
+
+	echo "Creating verifiable credential for issuer $1\n"
+	docker exec -e ADDRESS=$ADDRESS $4 /bin/sh -c 'poacli tx did create-verifiable-credential $(echo $ADDRESS) --trust-node --from validator --chain-id cash --keyring-backend test -y'
+
+	sleep 5
 	
 	## create the issuer token pairing
-	docker exec -e ADDRESS=$ADDRESS -e ISSUER_NAME=$1 -e TOKEN_NAME=$2 $4 /bin/sh -c 'poacli tx issuer create-issuer $(echo $ISSUER_NAME) $(echo $ADDRESS) $(echo $TOKEN_NAME) 100000000000 -y --trust-node --from validator --chain-id cash --keyring-backend test'
+	echo "Creating issuer with name $1 and token $2: on node $4\n"
+	docker exec -e ADDRESS=$ADDRESS -e ISSUER_NAME=$1 -e TOKEN_NAME=$2 $3 /bin/sh -c 'poacli tx issuer create-issuer $(echo $ISSUER_NAME) $(echo $ADDRESS) $(echo $TOKEN_NAME) 100000000000 -y --trust-node --from $(echo $ISSUER_NAME) --chain-id cash --keyring-backend test'
 	
 	sleep 5
 }

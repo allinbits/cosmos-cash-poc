@@ -216,6 +216,7 @@ func NewInitApp(
 			app.accountKeeper,
 			app.supplyKeeper,
 			app.issuerKeeper,
+			app.didKeeper,
 			auth.DefaultSigVerificationGasConsumer,
 		),
 	)
