@@ -2,6 +2,8 @@ package ante
 
 import (
 	"fmt"
+	didkeeper "github.com/allinbits/cosmos-cash-poa/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash-poa/x/did/types"
 	"github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
 	"github.com/allinbits/cosmos-cash-poa/x/issuer/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -9,20 +11,22 @@ import (
 )
 
 // NewAnteHandler returns an AnteHandler
-func NewAnteHandler(ik keeper.Keeper) sdk.AnteHandler {
+func NewAnteHandler(ik keeper.Keeper, dk didkeeper.Keeper) sdk.AnteHandler {
 	return sdk.ChainAnteDecorators(
-		NewDeductIssuerFeeDecorator(ik),
+		NewDeductIssuerFeeDecorator(ik, dk),
 	)
 }
 
 // DeductIssuerFeeDecorator deducts fees from the every send transaction
 type DeductIssuerFeeDecorator struct {
 	ik keeper.Keeper
+	dk didkeeper.Keeper
 }
 
-func NewDeductIssuerFeeDecorator(ik keeper.Keeper) DeductIssuerFeeDecorator {
+func NewDeductIssuerFeeDecorator(ik keeper.Keeper, dk didkeeper.Keeper) DeductIssuerFeeDecorator {
 	return DeductIssuerFeeDecorator{
 		ik: ik,
+		dk: dk,
 	}
 }
 
@@ -36,6 +40,22 @@ func (difd DeductIssuerFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 			}
 
 			if found {
+				did, foundDid := difd.dk.GetDidDocument(ctx, []byte(didtypes.DidIdentifer+sendMsg.ToAddress.String()))
+				if !foundDid {
+					return ctx, fmt.Errorf("user has no identity")
+				}
+
+				cred, foundCred := difd.dk.GetVerifiableCredential(ctx, []byte(did.Service[0].ID))
+				if !foundCred {
+					return ctx, fmt.Errorf("user has no credentials")
+				}
+
+				role := cred.CredentialSubject.Role
+
+				if role != "User" && role != "Issuer" && role != "Regulator" {
+					return ctx, fmt.Errorf("user has incorrect role")
+				}
+
 				account, found := difd.ik.GetAccount(ctx, sendMsg.FromAddress)
 				if found {
 					if account.State == types.FROZENACCOUNT {

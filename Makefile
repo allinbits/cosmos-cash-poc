@@ -145,7 +145,7 @@ send-token:
 	poacli tx send $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a --keyring-backend test) $(shell go run cmd/poacli/main.go keys show validator -a --keyring-backend test) 50000000eurotoken --from euro-token-issuer -y --trust-node --chain-id cash --keyring-backend test
 
 send-token-back:
-	poacli tx send $(shell go run cmd/poacli/main.go keys show validator -a) $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a) 10000000eurotoken --from euro-token-issuer -y --trust-node --chain-id cash
+	poacli tx send $(shell go run cmd/poacli/main.go keys show validator -a --keyring-backend test) $(shell go run cmd/poacli/main.go keys show euro-token-issuer -a --keyring-backend test) 10000000eurotoken --from euro-token-issuer -y --trust-node --chain-id cash --keyring-backend test
 
 mint-token: 
 	go run cmd/poacli/main.go tx issuer mint-token eurotoken 50000000 --trust-node --from euro-token-issuer --chain-id cash
@@ -163,7 +163,7 @@ unfreeze-token:
 	go run cmd/poacli/main.go tx issuer unfreeze-token eurotoken --trust-node --from euro-token-issuer --chain-id cash
 
 query-balance: 
-	go run cmd/poacli/main.go query account $(shell go run cmd/poacli/main.go keys show validator -a)
+	go run cmd/poacli/main.go query account $(shell go run cmd/poacli/main.go keys show validator -a --keyring-backend test)
 
 freeze-account: 
 	go run cmd/poacli/main.go tx issuer freeze-account $(shell go run cmd/poacli/main.go keys show validator -a) --trust-node --from euro-token-issuer --chain-id cash

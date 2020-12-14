@@ -1,6 +1,7 @@
 package app
 
 import (
+	didkeeper "github.com/allinbits/cosmos-cash-poa/x/did/keeper"
 	issuerante "github.com/allinbits/cosmos-cash-poa/x/issuer/ante"
 	issuerkeeper "github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,6 +17,7 @@ func NewAnteHandler(
 	ak authkeeper.AccountKeeper,
 	supplyKeeper supplykeeper.Keeper,
 	ik issuerkeeper.Keeper,
+	dk didkeeper.Keeper,
 	sigGasConsumer authante.SignatureVerificationGasConsumer,
 ) sdk.AnteHandler {
 	return sdk.ChainAnteDecorators(
@@ -30,6 +32,6 @@ func NewAnteHandler(
 		authante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
 		authante.NewSigVerificationDecorator(ak),
 		authante.NewIncrementSequenceDecorator(ak), // innermost AnteDecorator
-		issuerante.NewDeductIssuerFeeDecorator(ik),
+		issuerante.NewDeductIssuerFeeDecorator(ik, dk),
 	)
 }
