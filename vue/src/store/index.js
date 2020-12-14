@@ -16,6 +16,8 @@ export default new Vuex.Store({
     poaVotes: [],
     issuers: [],
     tokens: [],
+    ids: [],
+    creds: [],
   },
   mutations: {
     entitySet(state, { type, body }) {
@@ -40,6 +42,12 @@ export default new Vuex.Store({
     },
     tokensUpdate(state, tokens) {
       state.tokens = tokens;
+    },
+    idsUpdate(state, ids) {
+      state.ids = ids;
+    },
+    credsUpdate(state, creds) {
+      state.creds = creds;
     },
   },
   actions: {
@@ -80,6 +88,14 @@ export default new Vuex.Store({
 
       state.tokens[address] = data.result;
       commit("tokensUpdate", state.tokens);
+    },
+    async getIds({ state, commit }) {
+      const { data } = await axios.get(`${VUE_APP_API_COSMOS}/did/documents`);
+      commit("idsUpdate", data.result);
+    },
+    async getCreds({ state, commit }) {
+      const { data } = await axios.get(`${VUE_APP_API_COSMOS}/did/creds`);
+      commit("credsUpdate", data.result);
     },
   },
 });

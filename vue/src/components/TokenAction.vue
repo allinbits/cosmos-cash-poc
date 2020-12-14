@@ -64,11 +64,13 @@ export default {
   },
   computed: {
     token() {
-      const address = this.$store.state.cosmos.account.address
-      const tokens = this.$store.state.tokens[address]
-      const issuers = this.$store.state.issuers
+      const address = this.$store.state.cosmos.account.address;
+      const tokens = this.$store.state.tokens[address];
+      const issuers = this.$store.state.issuers;
       if (tokens) {
-        const issuer = issuers.reduce((value)=>{ return value.address === address ? value: null })
+        const issuer = issuers.reduce((value) => {
+          return value.address === address ? value : null;
+        });
         return issuer.token;
       }
     },

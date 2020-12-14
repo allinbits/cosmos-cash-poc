@@ -11,12 +11,14 @@ import IssuerList from "./components/IssuerList.vue";
 import TokenAction from "./components/TokenAction.vue";
 import UserAction from "./components/UserAction.vue";
 import ValidatorListPOA from "./components/ValidatorListPOA.vue";
+import IdList from "./components/IDList.vue";
 
 Vue.use(VueMaterial);
 Vue.component("issuer-list", IssuerList);
 Vue.component("token-action", TokenAction);
 Vue.component("user-action", UserAction);
 Vue.component("validator-list-poa", ValidatorListPOA);
+Vue.component("id-list", IdList);
 
 Vue.config.productionTip = false;
 

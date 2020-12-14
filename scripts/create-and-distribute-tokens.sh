@@ -71,6 +71,20 @@ sendTokens() {
 	sleep 5
 }
 
+###############################################################################
+###                           STEP 0		                            ###
+###############################################################################
+
+# create regulator role
+
+docker exec poadnode0 /bin/sh -c 'poacli tx did create-did-document --trust-node --from validator --chain-id cash --keyring-backend test -y'
+
+sleep 5
+
+echo "Creating regulator role\n"
+docker exec poadnode0 /bin/sh -c 'poacli tx did create-verifiable-credential $(poacli keys show validator -a --keyring-backend test) --trust-node --from validator --chain-id cash --keyring-backend test -y'
+
+sleep 5
 
 ###############################################################################
 ###                           STEP 1		                            ###

@@ -12,6 +12,13 @@
               exact
             ></md-tab>
             <md-tab
+              id="tab-Id"
+              md-label="Identity"
+              md-icon="perm_identity"
+              to="/ids"
+              exact
+            ></md-tab>
+            <md-tab
               id="tab-issuer"
               md-label="Issuers"
               md-icon="supervisor_account"
