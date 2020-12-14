@@ -4,6 +4,7 @@ import Index from "../views/Index.vue";
 import Issuer from "../views/Issuer.vue";
 import Admin from "../views/Admin.vue";
 import Validator from "../views/Validator.vue";
+import Id from "../views/Id.vue";
 
 Vue.use(VueRouter);
 
@@ -23,6 +24,10 @@ const routes = [
   {
     path: "/validators",
     component: Validator,
+  },
+  {
+    path: "/ids",
+    component: Id,
   },
 ];
 

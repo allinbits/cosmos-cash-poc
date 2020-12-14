@@ -1,8 +1,7 @@
-
 <template>
   <div>
     <div class="sp-container">
-<validator-list-poa class="top_spacing" />
+      <validator-list-poa class="top_spacing" />
       <!-- this line is used by starport scaffolding # 4 -->
     </div>
   </div>

@@ -1,40 +1,40 @@
 <template>
   <div class="sp-container">
-      <md-card-content class="md-layout">
-        <br />
-        <div class="md-layout-item" />
-        <div class="md-layout-item md-size-60">
-          <div class="md-title">{{ type }} Tokens</div>
-          <md-field>
-            <label>Token</label>
-            <md-input v-model="token"></md-input>
-          </md-field>
+    <md-card-content class="md-layout">
+      <br />
+      <div class="md-layout-item" />
+      <div class="md-layout-item md-size-60">
+        <div class="md-title">{{ type }} Tokens</div>
+        <md-field>
+          <label>Token</label>
+          <md-input v-model="token"></md-input>
+        </md-field>
 
-            <md-field>
-              <label>{{ type }} Token</label>
-              <md-input v-model="amount"></md-input>
-              <md-icon class="md-accent">warning</md-icon>
-            </md-field>
+        <md-field>
+          <label>{{ type }} Token</label>
+          <md-input v-model="amount"></md-input>
+          <md-icon class="md-accent">warning</md-icon>
+        </md-field>
 
-          <div class="md-layout">
-            <div class="md-layout-item"></div>
-            <div v-if="loading">
-              <md-progress-spinner
-                :md-diameter="30"
-                md-mode="indeterminate"
-              ></md-progress-spinner>
-            </div>
-            <md-button
-              class="md-raised md-primary button_spacing"
-              @click="submit(type)"
-              :disabled="loading"
-            >
-              {{ type }} Token
-            </md-button>
+        <div class="md-layout">
+          <div class="md-layout-item"></div>
+          <div v-if="loading">
+            <md-progress-spinner
+              :md-diameter="30"
+              md-mode="indeterminate"
+            ></md-progress-spinner>
           </div>
+          <md-button
+            class="md-raised md-primary button_spacing"
+            @click="submit(type)"
+            :disabled="loading"
+          >
+            {{ type }} Token
+          </md-button>
         </div>
-        <div class="md-layout-item" />
-      </md-card-content>
+      </div>
+      <div class="md-layout-item" />
+    </md-card-content>
   </div>
 </template>
 

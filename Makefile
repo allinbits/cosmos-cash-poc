@@ -72,6 +72,9 @@ build-linux:
 
 test-bdd:
 	cd ./test/e2e/issuers && go test
+
+localnet-users:
+	./scripts/create-user-accounts.sh
 	
 localnet-distribute-tokens:
 	./scripts/create-and-distribute-tokens.sh
