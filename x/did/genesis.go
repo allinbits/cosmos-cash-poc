@@ -2,8 +2,8 @@ package did
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/allinbits/cosmos-cash-poa/x/did/types"
-	"github.com/allinbits/cosmos-cash-poa/x/did/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/did/types"
+	"github.com/allinbits/cosmos-cash-poc/x/did/keeper"
 )
 
 // InitGenesis initialize default parameters

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 
-	issuertypes "github.com/allinbits/cosmos-cash-poa/x/issuer/types"
+	issuertypes "github.com/allinbits/cosmos-cash-poc/x/issuer/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"

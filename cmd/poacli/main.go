@@ -23,7 +23,7 @@ import (
 	"github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/allinbits/cosmos-cash-poa/app"
+	"github.com/allinbits/cosmos-cash-poc/app"
 	// this line is used by starport scaffolding
 )
 

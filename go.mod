@@ -1,4 +1,4 @@
-module github.com/allinbits/cosmos-cash-poa
+module github.com/allinbits/cosmos-cash-poc
 
 go 1.14
 

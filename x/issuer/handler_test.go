@@ -3,8 +3,8 @@ package issuer
 import (
 	"testing"
 
-	"github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
-	"github.com/allinbits/cosmos-cash-poa/x/issuer/types"
+	"github.com/allinbits/cosmos-cash-poc/x/issuer/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/issuer/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )

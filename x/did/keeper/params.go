@@ -3,7 +3,7 @@ package keeper
 // TODO: Define if your module needs Parameters, if not this can be deleted
 
 import (
-	//	"github.com/allinbits/cosmos-cash-poa/x/did/types"
+	//	"github.com/allinbits/cosmos-cash-poc/x/did/types"
 	_ "github.com/cosmos/cosmos-sdk/types"
 )
 

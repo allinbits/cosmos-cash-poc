@@ -4,7 +4,7 @@ import (
 	// this line is used by starport scaffolding # 1
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/allinbits/cosmos-cash-poa/x/did/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/did/keeper"
 	//	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

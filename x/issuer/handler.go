@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	didkeeper "github.com/allinbits/cosmos-cash-poa/x/did/keeper"
-	didtypes "github.com/allinbits/cosmos-cash-poa/x/did/types"
-	"github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
-	"github.com/allinbits/cosmos-cash-poa/x/issuer/types"
+	didkeeper "github.com/allinbits/cosmos-cash-poc/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash-poc/x/did/types"
+	"github.com/allinbits/cosmos-cash-poc/x/issuer/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/issuer/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )

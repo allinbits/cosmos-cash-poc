@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/allinbits/cosmos-cash-poa/x/regulator/types"
+	"github.com/allinbits/cosmos-cash-poc/x/regulator/types"
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {

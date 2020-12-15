@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/allinbits/cosmos-cash-poa/x/did/keeper"
-	"github.com/allinbits/cosmos-cash-poa/x/did/types"
-	issuerkeeper "github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
-	regulatorkeeper "github.com/allinbits/cosmos-cash-poa/x/regulator/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/did/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/did/types"
+	issuerkeeper "github.com/allinbits/cosmos-cash-poc/x/issuer/keeper"
+	regulatorkeeper "github.com/allinbits/cosmos-cash-poc/x/regulator/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )

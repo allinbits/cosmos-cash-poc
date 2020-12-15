@@ -13,7 +13,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/allinbits/cosmos-cash-poa/app"
+	"github.com/allinbits/cosmos-cash-poc/app"
 
 	poacli "github.com/allinbits/modules/poa/client/cli"
 	"github.com/cosmos/cosmos-sdk/baseapp"

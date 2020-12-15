@@ -1,8 +1,8 @@
 package regulator
 
 import (
-	"github.com/allinbits/cosmos-cash-poa/x/regulator/keeper"
-	"github.com/allinbits/cosmos-cash-poa/x/regulator/types"
+	"github.com/allinbits/cosmos-cash-poc/x/regulator/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/regulator/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
