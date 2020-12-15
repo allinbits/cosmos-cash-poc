@@ -2,7 +2,7 @@
 
 ---
 
-Cosmos cash is a distributed application that stores data in a [key/value store](https://www.techopedia.com/definition/26284/key-value-store) and secures that data using a [Proof Of Authority](https://changelly.com/blog/what-is-proof-of-authority-poa/) consensus algorithm.
+Cosmos cash is a distributed application that stores data in a [key/value store](https://www.techopedia.com/definition/26284/key-value-store) and is secured using a [Proof Of Authority](https://github.com/allinbits/modules/tree/master/x/poa) consensus algorithm.
 
 The goal of the application is to re-define how an [electric money institution](https://thebanks.eu/emis) works by leveraging the [cosmos-sdk](https://github.com/cosmos/cosmos-sdk/) and [tendermint](https://github.com/tendermint/tendermint/).
 
@@ -10,10 +10,10 @@ The goal of the application is to re-define how an [electric money institution](
 
 ---
 
-1. Clone the repository 
+1. Clone the repository
 
 ```sh
-git clone git@github.com:allinbits/cosmos-cash-poa.git 
+git clone git@github.com:allinbits/cosmos-cash-poc.git
 ```
 
 <br />
@@ -21,7 +21,7 @@ git clone git@github.com:allinbits/cosmos-cash-poa.git
 2. Install the binaries (poad, poacli)
 
 ```
-cd cosmos-cash-poa
+cd cosmos-cash-poc
 make install
 ```
 
@@ -36,7 +36,7 @@ poacli -h
 
 <br />
 
-### How to initialize the application 
+### How to initialize the application
 
 ---
 
@@ -85,6 +85,84 @@ poad collect-gentxs
 ```sh
 poad start
 ```
+
+<br />
+
+7. Run commands outlined in the Makefile
+
+```sh
+cat Makefile | grep create-
+```
+
+<br />
+
+### How to run a localnet
+
+---
+
+1. Build the dockerfile
+
+```sh
+docker build -t 388991194029.dkr.ecr.us-east-1.amazonaws.com/allinbits-dev/cosmos-cash-poa .
+```
+
+<br />
+
+2. Run the localnet
+
+```sh
+make localnet-start
+```
+
+<br />
+
+3. Set up the consensus
+
+```sh
+make localnet-consensus
+```
+
+<br />
+
+4. Create issuer data
+
+```sh
+make localnet-distribute-tokens
+```
+
+<br />
+
+4. Create user data
+
+```sh
+make localnet-users
+```
+
+<br />
+
+### How to run the webui (run localnet commands for seed data)
+
+---
+
+1. Go to the `vue` folder
+
+```sh
+cd vue
+```
+
+<br />
+
+2. Start the web server
+
+```sh
+yarn serve
+```
+
+<br />
+
+3. Check the website in the browser
+
+[localhost:8080](http://localhost:8080)
 
 <br />
 
