@@ -8,12 +8,12 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/allinbits/cosmos-cash-poa/x/did/client/cli"
-	"github.com/allinbits/cosmos-cash-poa/x/did/client/rest"
-	"github.com/allinbits/cosmos-cash-poa/x/did/keeper"
-	"github.com/allinbits/cosmos-cash-poa/x/did/types"
-	issuerkeeper "github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
-	regulatorkeeper "github.com/allinbits/cosmos-cash-poa/x/regulator/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/did/client/cli"
+	"github.com/allinbits/cosmos-cash-poc/x/did/client/rest"
+	"github.com/allinbits/cosmos-cash-poc/x/did/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/did/types"
+	issuerkeeper "github.com/allinbits/cosmos-cash-poc/x/issuer/keeper"
+	regulatorkeeper "github.com/allinbits/cosmos-cash-poc/x/regulator/keeper"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"

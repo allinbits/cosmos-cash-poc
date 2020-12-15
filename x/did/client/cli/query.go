@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/allinbits/cosmos-cash-poa/x/did/types"
+	"github.com/allinbits/cosmos-cash-poc/x/did/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

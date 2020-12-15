@@ -3,7 +3,7 @@ package did
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/allinbits/cosmos-cash-poa/x/did/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/did/keeper"
 )
 
 // BeginBlocker check for infraction evidence or downtime of validators

@@ -10,17 +10,17 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/allinbits/cosmos-cash-poa/x/did"
-	didkeeper "github.com/allinbits/cosmos-cash-poa/x/did/keeper"
-	didtypes "github.com/allinbits/cosmos-cash-poa/x/did/types"
+	"github.com/allinbits/cosmos-cash-poc/x/did"
+	didkeeper "github.com/allinbits/cosmos-cash-poc/x/did/keeper"
+	didtypes "github.com/allinbits/cosmos-cash-poc/x/did/types"
 
-	"github.com/allinbits/cosmos-cash-poa/x/regulator"
-	regulatorkeeper "github.com/allinbits/cosmos-cash-poa/x/regulator/keeper"
-	regulatortypes "github.com/allinbits/cosmos-cash-poa/x/regulator/types"
+	"github.com/allinbits/cosmos-cash-poc/x/regulator"
+	regulatorkeeper "github.com/allinbits/cosmos-cash-poc/x/regulator/keeper"
+	regulatortypes "github.com/allinbits/cosmos-cash-poc/x/regulator/types"
 
-	"github.com/allinbits/cosmos-cash-poa/x/issuer"
-	issuerkeeper "github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
-	issuertypes "github.com/allinbits/cosmos-cash-poa/x/issuer/types"
+	"github.com/allinbits/cosmos-cash-poc/x/issuer"
+	issuerkeeper "github.com/allinbits/cosmos-cash-poc/x/issuer/keeper"
+	issuertypes "github.com/allinbits/cosmos-cash-poc/x/issuer/types"
 
 	"github.com/allinbits/modules/poa"
 	poakeeper "github.com/allinbits/modules/poa/keeper"

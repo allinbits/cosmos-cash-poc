@@ -1,9 +1,9 @@
 package app
 
 import (
-	didkeeper "github.com/allinbits/cosmos-cash-poa/x/did/keeper"
-	issuerante "github.com/allinbits/cosmos-cash-poa/x/issuer/ante"
-	issuerkeeper "github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
+	didkeeper "github.com/allinbits/cosmos-cash-poc/x/did/keeper"
+	issuerante "github.com/allinbits/cosmos-cash-poc/x/issuer/ante"
+	issuerkeeper "github.com/allinbits/cosmos-cash-poc/x/issuer/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"

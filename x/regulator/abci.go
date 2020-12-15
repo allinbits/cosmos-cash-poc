@@ -3,7 +3,7 @@ package regulator
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/allinbits/cosmos-cash-poa/x/regulator/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/regulator/keeper"
 )
 
 // BeginBlocker check for infraction evidence or downtime of validators

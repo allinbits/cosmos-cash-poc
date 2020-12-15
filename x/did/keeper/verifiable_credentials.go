@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/allinbits/cosmos-cash-poa/x/did/types"
+	"github.com/allinbits/cosmos-cash-poc/x/did/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

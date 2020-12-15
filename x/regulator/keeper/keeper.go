@@ -5,7 +5,7 @@ import (
 
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/allinbits/cosmos-cash-poa/x/regulator/types"
+	"github.com/allinbits/cosmos-cash-poc/x/regulator/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

@@ -1,7 +1,7 @@
 package issuer
 
 import (
-	"github.com/allinbits/cosmos-cash-poa/x/issuer/keeper"
+	"github.com/allinbits/cosmos-cash-poc/x/issuer/keeper"
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
