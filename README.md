@@ -1,10 +1,18 @@
-### Cosmos-Cash
+# Cosmos-Cash
+
+## What is Cosmos Cash
+
+Cosmos Cash is a research project that aims to develop a protocol that provides features typical of electronic money, adopting the blockchain technology as underlying infrastructure, and thus leading to a digital asset to be applied within the payment industry.
+
+Please read the [full report for more information](https://drive.google.com/file/d/1zmEyA8kA0uAIRGDKxYElOKvjtz4f_Ep5/view?usp=sharing).
 
 ---
 
-Cosmos cash is a distributed application that stores data in a [key/value store](https://www.techopedia.com/definition/26284/key-value-store) and is secured using a [Proof Of Authority](https://github.com/allinbits/modules/tree/master/x/poa) consensus algorithm.
+## What's in this repository
 
-The goal of the application is to re-define how an [electric money institution](https://thebanks.eu/emis) works by leveraging the [cosmos-sdk](https://github.com/cosmos/cosmos-sdk/) and [tendermint](https://github.com/tendermint/tendermint/).
+This repository hosts a Cosmos Cash proof-of-concept application built on Cosmos SDK that stores data in a [key/value store](https://www.techopedia.com/definition/26284/key-value-store) and is secured using a [Proof Of Authority](https://github.com/allinbits/modules/tree/master/x/poa) consensus algorithm.
+
+The goal of the application is to re-define how an [electric money institution](https://thebanks.eu/emis) works by leveraging the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk/) and [Tendermint](https://github.com/tendermint/tendermint/).
 
 ### How to install the application
 
