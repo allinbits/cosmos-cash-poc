@@ -35,11 +35,12 @@ make install
 
 <br />
 
-3. Ensure binaries are available
+3. Ensure binaries are available and for testing purposes set the keyring to be test
 
 ```
 poad -h
 poacli -h
+poacli config keyring-backend test
 ```
 
 <br />
@@ -59,7 +60,7 @@ poad init --chain-id=cash cash
 2. Create a key for the first validator
 
 ```sh
-poacli keys add validator --keyring-backend test
+poacli keys add validator
 ```
 <br />
 
@@ -75,7 +76,7 @@ poad add-genesis-account $(poacli keys show validator -a) 1000000000cash,1000000
 4. Generate a initial `CreateValidator` transaction to allow other applications in the network to sync when they join
 
 ```sh
-poad gentx --name validator
+poad gentx --name validator --keyring-backend test
 ```
 
 <br />
