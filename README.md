@@ -59,7 +59,7 @@ poad init --chain-id=cash cash
 2. Create a key for the first validator
 
 ```sh
-poacli keys add validator
+poacli keys add validator --keyring-backend test
 ```
 <br />
 
